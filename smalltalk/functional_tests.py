@@ -17,6 +17,8 @@ class NewVisitorTest(unittest.TestCase):
 
         # She notices the page title and header mention 'Smalltalk'
         self.assertIn('Smalltalk', self.browser.title)
+        self.assertIn('Smalltalk',
+            self.browser.find_element_by_id('header-title').text)
 
         # She sees a button labeled 'Create New Contact' an clicks it.  She now
         # sees a 'New Contact' form.
