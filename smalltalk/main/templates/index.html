@@ -1,5 +1,9 @@
+{% load staticfiles %}
 <html>
-<head><title>Smalltalk</title></head>
+<head>
+    <title>Smalltalk</title>
+    <link rel="stylesheet" type="text/css" href="{% static "smalltalk.css" %}">
+</head>
 <body>
 <div id="header-title"><h1>Smalltalk</h2></div>
 <button type="button" class="btn btn-default" id="new_contact_button">New Contact</button>
