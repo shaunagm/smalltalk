@@ -22,6 +22,8 @@ class NewVisitorTest(unittest.TestCase):
 
         # She sees a button labeled 'Create New Contact' an clicks it.  She now
         # sees a 'New Contact' form.
+        self.assertIn('New Contact',
+            self.browser.find_element_by_id('new_contact_button').text)
 
         # She clicks submit without filling out the form, and the form gives her
         # an error message reminding her to fill out the required fields.
