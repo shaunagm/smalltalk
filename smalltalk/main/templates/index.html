@@ -3,10 +3,14 @@
 <head>
     <title>Smalltalk</title>
     <link rel="stylesheet" type="text/css" href="{% static "smalltalk.css" %}">
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="{% static "smalltalk.js" %}"></script>
 </head>
 <body>
 <div id="header-title"><h1>Smalltalk</h2></div>
 <button type="button" class="btn btn-default" id="new_contact_button">New Contact</button>
+<div id="contact_form_container">
 {{ ContactForm }}
+</div>
 </body>
 </html>

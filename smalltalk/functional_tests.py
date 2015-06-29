@@ -20,10 +20,16 @@ class NewVisitorTest(unittest.TestCase):
         self.assertIn('Smalltalk',
             self.browser.find_element_by_id('header-title').text)
 
-        # She sees a button labeled 'Create New Contact' an clicks it.  She now
-        # sees a 'New Contact' form.
+        # She sees a button labeled 'Create New Contact'.
         self.assertIn('New Contact',
             self.browser.find_element_by_id('new_contact_button').text)
+
+        # She clicks it and a new contact form appears
+        self.assertEqual(False,
+            self.browser.find_element_by_id('contact_form_container').is_displayed())
+        self.browser.find_element_by_id('new_contact_button').click()
+        self.assertIn('Name',
+            self.browser.find_element_by_id('contact_form_container').text)
 
         # She clicks submit without filling out the form, and the form gives her
         # an error message reminding her to fill out the required fields.
