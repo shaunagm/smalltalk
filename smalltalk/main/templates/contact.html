@@ -1,10 +1,26 @@
-<html>
-<head>
-<title>{{ object.name }} Contact Details</title>
-</head>
-<body>
+{% extends "index.html" %}
+
+{% block title %}
+
+    {{ object.name }} Contact Details
+
+{% endblock title %}
+
+{% block body %}
+
     <h1 id="contact_name">{{ object.name }}</h1>
     <h3 id="contact_details">{{ object.details}}</h3>
     <h2><a id="contact_edit" href="{% url 'contact_edit' object.pk %}">Edit</a></h2>
-</body>
-</html>
+
+    <div class="btn-group" id="add_to_group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Add to Group<span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            {% for group in object.groups %}
+            <li><a href="#"> {{ group.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock body %}
