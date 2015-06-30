@@ -6,7 +6,7 @@
 
 {% endblock title %}
 
-{% block body %}
+{% block content %}
 
     <form name="form" method="post" action="">
     {% csrf_token %}
@@ -14,4 +14,4 @@
     <button type="submit" class="btn btn-default" id="edit_contact_submit">Submit</button>
     </form>
 
-{% endblock body %}
+{% endblock content %}
