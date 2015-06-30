@@ -45,7 +45,7 @@ class NewVisitorTest(unittest.TestCase):
             self.browser.find_element_by_id('new_contact_message').text)
 
         # She fills out the required fields and sees a link to view the new contact.
-        name_input = self.browser.find_element_by_id('id_name')
+        name_input = self.browser.find_element_by_id('id_contact-name')
         name_input.send_keys("Willow Rosenberg")
         self.browser.find_element_by_id('new_contact_submit').click()
         self.assertIn("You have added a new contact",
@@ -71,8 +71,17 @@ class NewVisitorTest(unittest.TestCase):
             self.browser.find_element_by_id('contact_details').text)
 
         # She decides to add her new contact to a group, so she clicks the
-        # "Add to Group(s)" button.  She can now see a checklist of existing
-        # groups.
+        # "Add to Group(s)" button.  She is informed that she needs to create
+        # groups before she can add contacts to them.
+        self.browser.find_element_by_id('add_to_group').click()
+        time.sleep(.5)
+        self.assertIn("You do not have any groups.",
+            self.browser.find_element_by_id('group_message').get_attribute('innerHTML'))
+
+        # She clicks the "Create a group" link and is brought to a new page with
+        # a form to create a new group.
+        self.browser.find_element_by_id('create_group_link').click()
+
 
         # She selects one of the existing groups and clicks 'save'. The contact
         # view now displays that the contact is in a group.

@@ -13,8 +13,8 @@ $( document ).ready(function() {
         $.ajax({
             url: '/new_contact',
             type: 'POST',
-            data: {'name': $("#id_name").val(),
-                'details': $("#id_details").val()},
+            data: {'name': $("#id_contact-name").val(),
+                'details': $("#id_contact-details").val()},
             dataType: 'json',
             beforeSend: function(xhr, settings) {
                 xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
@@ -32,6 +32,35 @@ $( document ).ready(function() {
             error: function (response) {
                 console.log(response);
                 $("#new_contact_message").html("There was an error with the site.");
+            }
+        });
+
+    });
+
+    $('#new_group_submit').click(function() {
+
+        $.ajax({
+            url: '/new_group',
+            type: 'POST',
+            data: {'name': $("#id_group-name").val(),
+            'details': $("#id_group-details").val()},
+            dataType: 'json',
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+            },
+            success: function(data, textStatus, jqXHR) {
+                var d = $.parseJSON(data);
+                if (d.status == "success") {
+                    $("#group_form_container").hide();
+                    $("#new_group_message").html("You have added a new group: <a href='" +
+                    d.url + "'>" + d.name + "</a>.");
+                } else {
+                    $("#new_group_message").html(d.message);
+                }
+            },
+            error: function (response) {
+                console.log(response);
+                $("#new_group_message").html("There was an error with the site.");
             }
         });
 
