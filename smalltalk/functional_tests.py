@@ -1,5 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+
 
 import time
 import unittest
@@ -51,6 +53,12 @@ class NewVisitorTest(unittest.TestCase):
         self.browser.find_element_by_id('new_contact_submit').click()
         self.assertIn("You have added a new contact",
             self.browser.find_element_by_id('new_contact_message').text)
+
+        # She clicks the link to view the new contact and sees a page with the
+        # contact's details.
+        self.browser.find_element(By.XPATH, '//span[@id="new_contact_message"]/a').click()
+        self.assertIn("Contact Details", self.browser.title)
+
 
         # She decides she wants to add additional information to the contact, so
         # she clicks the "edit" button.

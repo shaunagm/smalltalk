@@ -1,6 +1,7 @@
 import json
 from django.shortcuts import render
 from django.views.generic import TemplateView
+from django.views.generic.detail import DetailView
 from django.http import JsonResponse
 
 from .models import Contact
@@ -31,3 +32,7 @@ def create_new_contact(request):
     else:
         return JsonResponse(json.dumps({'status': 'error',
             'message': 'The name field is required.'}), safe=False)
+
+class ContactDetail(DetailView):
+    model = Contact
+    template_name = "contact.html"
