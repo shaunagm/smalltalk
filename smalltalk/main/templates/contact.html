@@ -3,6 +3,8 @@
 <title>{{ object.name }} Contact Details</title>
 </head>
 <body>
-    {{ object}}
+    <h1 id="contact_name">{{ object.name }}</h1>
+    <h3 id="contact_details">{{ object.details}}</h3>
+    <h2><a id="contact_edit" href="{% url 'contact_edit' object.pk %}">Edit</a></h2>
 </body>
 </html>

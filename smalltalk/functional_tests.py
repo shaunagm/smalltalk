@@ -20,9 +20,6 @@ class NewVisitorTest(unittest.TestCase):
         # its homepage
         self.browser.get('http://127.0.0.1:8000')
 
-        # For some reason, csrftoken cookie is not getting handled naturally
-        print(self.browser.get_cookies())
-
         # She notices the page title and header mention 'Smalltalk'
         self.assertIn('Smalltalk', self.browser.title)
         self.assertIn('Smalltalk',
@@ -59,11 +56,19 @@ class NewVisitorTest(unittest.TestCase):
         self.browser.find_element(By.XPATH, '//span[@id="new_contact_message"]/a').click()
         self.assertIn("Contact Details", self.browser.title)
 
-
         # She decides she wants to add additional information to the contact, so
         # she clicks the "edit" button.
+        self.browser.find_element_by_id('contact_edit').click()
+        self.assertIn("Edit", self.browser.title)
+
+        # There, she adds some information to the details field.
+        details_input = self.browser.find_element_by_id('id_details')
+        details_input.send_keys("Hacker, witch, and bff")
 
         # Once she saves her changes, the new contact view is updated.
+        self.browser.find_element_by_id('edit_contact_submit').click()
+        self.assertIn("Hacker, witch, and bff",
+            self.browser.find_element_by_id('contact_details').text)
 
         # She decides to add her new contact to a group, so she clicks the
         # "Add to Group(s)" button.  She can now see a checklist of existing

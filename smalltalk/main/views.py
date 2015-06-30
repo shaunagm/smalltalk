@@ -2,6 +2,7 @@ import json
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import UpdateView
 from django.http import JsonResponse
 
 from .models import Contact
@@ -36,3 +37,11 @@ def create_new_contact(request):
 class ContactDetail(DetailView):
     model = Contact
     template_name = "contact.html"
+
+class ContactEdit(UpdateView):
+    model = Contact
+    fields = ['name', 'details']
+    template_name = "contact_edit.html"
+
+    def get_success_url(self, **kwargs):
+        return self.object.get_url()
