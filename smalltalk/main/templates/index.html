@@ -18,13 +18,13 @@
 
 <body>
 {% block body %}
+
     <div id="header-title"><h1>Smalltalk</h2></div>
-    <button type="button" class="btn btn-default" id="new_contact_button">New Contact</button>
-    <span id="new_contact_message"></span>
-    <div id="contact_form_container">
-        {{ ContactForm }}
-        <button type="submit" class="btn btn-default" id="new_contact_submit">Submit</button>
-    </div>
+
+    {% include 'new_contact.html' %}
+
+    {% include 'new_group.html' %}
+
 {% endblock body %}
 </body>
 

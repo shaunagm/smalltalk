@@ -1,9 +1,11 @@
 $( document ).ready(function() {
 
     $("#new_contact_button").click(function(e) {
-
         $("#contact_form_container").show();
+    });
 
+    $("#new_group_button").click(function(e) {
+        $("#group_form_container").show();
     });
 
     $('#new_contact_submit').click(function() {
