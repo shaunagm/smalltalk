@@ -1,4 +1,7 @@
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+
+import time
 import unittest
 
 class NewVisitorTest(unittest.TestCase):
@@ -13,7 +16,10 @@ class NewVisitorTest(unittest.TestCase):
     def test_can_create_a_contact(self):
         # Buffy has heard about a cool new online app.  She goes to check out
         # its homepage
-        self.browser.get('http://localhost:8000')
+        self.browser.get('http://127.0.0.1:8000')
+
+        # For some reason, csrftoken cookie is not getting handled naturally
+        print(self.browser.get_cookies())
 
         # She notices the page title and header mention 'Smalltalk'
         self.assertIn('Smalltalk', self.browser.title)
@@ -33,8 +39,18 @@ class NewVisitorTest(unittest.TestCase):
 
         # She clicks submit without filling out the form, and the form gives her
         # an error message reminding her to fill out the required fields.
+        self.assertEqual("",
+            self.browser.find_element_by_id('new_contact_message').text)
+        self.browser.find_element_by_id('new_contact_submit').click()
+        self.assertEqual("The name field is required.",
+            self.browser.find_element_by_id('new_contact_message').text)
 
-        # She fills out the required fields and is taken to view her new contact.
+        # She fills out the required fields and sees a link to view the new contact.
+        name_input = self.browser.find_element_by_id('id_name')
+        name_input.send_keys("Willow Rosenberg")
+        self.browser.find_element_by_id('new_contact_submit').click()
+        self.assertIn("You have added a new contact",
+            self.browser.find_element_by_id('new_contact_message').text)
 
         # She decides she wants to add additional information to the contact, so
         # she clicks the "edit" button.
