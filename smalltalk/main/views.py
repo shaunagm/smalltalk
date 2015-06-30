@@ -23,7 +23,8 @@ def create_new_contact(request):
     name = request.POST.get('name', None)
     details = request.POST.get('details', None)
     if name:
-        contact, created = Contact.objects.get_or_create(name=name, details=details)
+        contact, created = Contact.objects.get_or_create(name=name,
+            defaults={'details' : details})
         if created:
             return JsonResponse(json.dumps({'status': 'success',
                 'name': contact.name, 'url': contact.get_url()}), safe=False)
