@@ -1,14 +1,19 @@
 import time
 import unittest
 
+from django.test import LiveServerTestCase
+from django.conf import settings
+
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
-from main.models import Contact, Group
+class NewVisitorTest(LiveServerTestCase):
 
-
-class NewVisitorTest(unittest.TestCase):
+    def __init__(self, *args, **kwargs):
+        super(NewVisitorTest, self).__init__(*args, **kwargs)
+        if settings.DEBUG == False:
+            settings.DEBUG = True
 
     def setUp(self):
         self.browser = webdriver.Firefox()
@@ -16,14 +21,11 @@ class NewVisitorTest(unittest.TestCase):
 
     def tearDown(self):
         self.browser.quit()
-        # Currently tests against "real" db.  Need to fix.
-        Contact.objects.all().delete()
-        Group.objects.all().delete()
 
     def test_can_create_a_contact(self):
         # Buffy has heard about a cool new online app.  She goes to check out
         # its homepage
-        self.browser.get('http://127.0.0.1:8000')
+        self.browser.get('%s' % (self.live_server_url))
 
         # She notices the page title says 'Smalltalk' and the text of the page
         # includes "Welcome!"
