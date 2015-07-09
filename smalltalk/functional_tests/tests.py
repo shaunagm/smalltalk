@@ -18,15 +18,10 @@ class NewVisitorTest(LiveServerTestCase):
             settings.DEBUG = True
 
     def setUp(self):
-        self.browser = webdriver.Firefox()
-        self.browser.implicitly_wait(3)
-
-    def tearDown(self):
-        self.browser.quit()
-
-    def test_can_create_contacts_and_groups(self):
         # Buffy has heard about a cool new online app.  She goes to check out
         # its homepage
+        self.browser = webdriver.Firefox()
+        self.browser.implicitly_wait(3)
         self.browser.get('%s' % (self.live_server_url))
 
         # She notices the page title says 'Smalltalk' and the text of the page
@@ -35,7 +30,12 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertIn('Welcome!',
             self.browser.find_element_by_css_selector('h2').text)
 
-        # She sees a prompt to create a new contact.  She clicks it and is brought
+    def tearDown(self):
+        # Buffy's over it.
+        self.browser.quit()
+
+    def test_can_create_contacts_and_groups(self):
+        # Buffy sees a prompt to create a new contact.  She clicks it and is brought
         # to a new page with a contact creation form.
         self.assertIn('New Contact',
             self.browser.find_element_by_id('nav_new_contact').get_attribute('innerHTML'))
@@ -118,17 +118,53 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertIn("We laugh in the face of danger.",
             self.browser.find_element_by_id('group_details').text)
 
-    # def test_can_add_a_topic(self):
-    
+
+    def test_can_create_topics(self):
+        # Buffy sees a prompt to create a new topic.  She clicks it and is brought
+        # to a new page with a topic creation form.
+
+        # She clicks submit without filling out the form, and the form gives her
+        # an error message reminding her to fill out the required fields (details &
+        # name this time).
+
+        # She fills out the required fields and is taken to a new page where she can
+        # see the topic details.
+
+        # She decides she wants to add additional information to the topic, so
+        # she clicks the "edit" button.
+
+        # There, she adds some information to the details field.
+
+        # Once she saves her changes, the new contact view is updated.
+
+        pass
     #    self.fail('Finish the test!')
 
-    # def test_can_create_an_account(self):
 
-        # She sees that the page prompts her to create an account to use the app.
+    # def test_can_view_lists_of_info(self):
 
-        # She clicks the 'create account' button and is prompted for a user name
-        # & password.
+        # Buffy wants to see all of the information she's added.  She sees a navigation
+        # link that says "show all topics" and clicks it.
 
+        # Buffy is taken to a view with multiple topics listed.  When she selects the first
+        # one, it takes her to a detail page.
+
+        # Buffy returns to the main list view.  She sees that it is sorted by recency
+        # by default.
+
+        # Next, Buffy clicks on the "show all contacts" options.  She sees a list of contacts.
+
+        # When she selects the first one, it takes her to a detail page.
+
+        # Buffy returns to the main list view.  She sees that it is sorted by recency
+        # by default.
+
+        # Next, Buffy clicks on the "show all groups" options.  She sees a list of contacts.
+
+        # When she selects the first one, it takes her to a detail page.
+
+        # Buffy returns to the main list view.  She sees that it is sorted by recency
+        # by default.
 
 
 if __name__ == '__main__':
