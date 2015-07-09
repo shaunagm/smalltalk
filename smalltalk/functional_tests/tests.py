@@ -10,6 +10,8 @@ from selenium.webdriver.common.by import By
 
 class NewVisitorTest(LiveServerTestCase):
 
+    fixtures = ['test_fixtures']
+
     def __init__(self, *args, **kwargs):
         super(NewVisitorTest, self).__init__(*args, **kwargs)
         if settings.DEBUG == False:
@@ -22,7 +24,7 @@ class NewVisitorTest(LiveServerTestCase):
     def tearDown(self):
         self.browser.quit()
 
-    def test_can_create_a_contact(self):
+    def test_can_create_contacts_and_groups(self):
         # Buffy has heard about a cool new online app.  She goes to check out
         # its homepage
         self.browser.get('%s' % (self.live_server_url))
