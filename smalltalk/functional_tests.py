@@ -20,40 +20,34 @@ class NewVisitorTest(unittest.TestCase):
         # its homepage
         self.browser.get('http://127.0.0.1:8000')
 
-        # She notices the page title and header mention 'Smalltalk'
+        # She notices the page title says 'Smalltalk' and the text of the page
+        # includes "Welcome!"
         self.assertIn('Smalltalk', self.browser.title)
-        self.assertIn('Smalltalk',
-            self.browser.find_element_by_id('header-title').text)
+        self.assertIn('Welcome!',
+            self.browser.find_element_by_css_selector('h2').text)
 
-        # She sees a button labeled 'Create New Contact'.
+        # She sees a prompt to create a new contact.  She clicks it and is brought
+        # to a new page with a contact creation form.
         self.assertIn('New Contact',
-            self.browser.find_element_by_id('new_contact_button').text)
-
-        # She clicks it and a new contact form appears
-        self.assertEqual(False,
-            self.browser.find_element_by_id('contact_form_container').is_displayed())
-        self.browser.find_element_by_id('new_contact_button').click()
-        self.assertIn('Name',
-            self.browser.find_element_by_id('contact_form_container').text)
+            self.browser.find_element_by_id('nav_new_contact').get_attribute('innerHTML'))
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_new_contact').click()
+        self.assertIn('contact/new', self.browser.current_url)
+        self.assertTrue(self.browser.find_element_by_id('edit_contact_submit'))
 
         # She clicks submit without filling out the form, and the form gives her
         # an error message reminding her to fill out the required fields.
         self.assertEqual("",
             self.browser.find_element_by_id('new_contact_message').text)
-        self.browser.find_element_by_id('new_contact_submit').click()
-        self.assertEqual("The name field is required.",
-            self.browser.find_element_by_id('new_contact_message').text)
+        self.browser.find_element_by_id('edit_contact_submit').click()
+        self.assertIn("The name field is required.",
+            self.browser.find_element_by_class_name('errorlist').text)
 
-        # She fills out the required fields and sees a link to view the new contact.
-        name_input = self.browser.find_element_by_id('id_contact-name')
+        # She fills out the required fields and is taken to a new page where she can
+        # see the contact details.
+        name_input = self.browser.find_element_by_id('id_name')
         name_input.send_keys("Willow Rosenberg")
-        self.browser.find_element_by_id('new_contact_submit').click()
-        self.assertIn("You have added a new contact",
-            self.browser.find_element_by_id('new_contact_message').text)
-
-        # She clicks the link to view the new contact and sees a page with the
-        # contact's details.
-        self.browser.find_element(By.XPATH, '//span[@id="new_contact_message"]/a').click()
+        self.browser.find_element_by_id('edit_contact_submit').click()
         self.assertIn("Contact Details", self.browser.title)
 
         # She decides she wants to add additional information to the contact, so
@@ -80,8 +74,11 @@ class NewVisitorTest(unittest.TestCase):
 
         # She clicks the "Create a group" link and is brought to a new page with
         # a form to create a new group.
-        self.browser.find_element_by_id('create_group_link').click()
-
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_new_group').click()
+        self.assertIn("Edit", self.browser.title)
+        self.assertIn('group/new', self.browser.current_url)
+        self.assertTrue(self.browser.find_element_by_id('edit_group_submit'))
 
         # She selects one of the existing groups and clicks 'save'. The contact
         # view now displays that the contact is in a group.

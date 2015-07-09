@@ -23,9 +23,8 @@ class IndexView(TemplateView):
 ### Contact Views ###
 
 class ContactCreate(CreateView):
-    model = Contact
+    form_class = ContactForm
     template_name = "contact_edit.html"
-    fields = ['name', 'details']
 
     def get_success_url(self, **kwargs):
         return self.object.get_url()
@@ -60,6 +59,13 @@ class ContactEdit(UpdateView):
         return self.object.get_url()
 
 ### Group Views ###
+
+class GroupCreate(CreateView):
+    form_class = GroupForm
+    template_name = "group_edit.html"
+
+    def get_success_url(self, **kwargs):
+        return self.object.get_url()
 
 def create_new_group(request):
     name = request.POST.get('name', None)

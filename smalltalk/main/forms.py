@@ -1,7 +1,10 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, CharField
+from django.utils.translation import ugettext_lazy as _
+
 from .models import Contact, Group
 
 class ContactForm(ModelForm):
+    name = CharField(error_messages={'required': 'The name field is required.'})
 
     class Meta:
         model = Contact
