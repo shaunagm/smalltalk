@@ -104,12 +104,23 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_id('edit_group_submit').click()
         self.assertIn("Group Details", self.browser.title)
 
-        # She selects one of the existing groups and clicks 'save'. The contact
-        # view now displays that the contact is in a group.
+        # She decides she wants to add additional information to the group, so
+        # she clicks the "edit" button.
+        self.browser.find_element_by_id('group_edit').click()
+        self.assertIn("Edit", self.browser.title)
 
-        self.fail('Finish the test!')
+        # There, she adds some information to the details field.
+        details_input = self.browser.find_element_by_id('id_details')
+        details_input.send_keys("We laugh in the face of danger.")
+
+        # Once she saves her changes, the new group view is updated.
+        self.browser.find_element_by_id('edit_group_submit').click()
+        self.assertIn("We laugh in the face of danger.",
+            self.browser.find_element_by_id('group_details').text)
 
     # def test_can_add_a_topic(self):
+    
+    #    self.fail('Finish the test!')
 
     # def test_can_create_an_account(self):
 

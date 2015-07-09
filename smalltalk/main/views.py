@@ -90,7 +90,7 @@ class GroupDetail(DetailView):
 class GroupEdit(UpdateView):
     model = Group
     fields = ['name', 'details']
-    template_name = "contact_edit.html"
+    template_name = "group_edit.html"
 
     def get_success_url(self, **kwargs):
         return self.object.get_url()
