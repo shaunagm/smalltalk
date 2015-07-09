@@ -11,6 +11,7 @@ class ContactForm(ModelForm):
         fields = ['name', 'details']
 
 class GroupForm(ModelForm):
+    name = CharField(error_messages={'required': 'The name field is required.'})    
 
     class Meta:
         model = Group

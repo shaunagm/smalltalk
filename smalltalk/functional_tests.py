@@ -2,7 +2,6 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
-
 import time
 import unittest
 
@@ -79,6 +78,21 @@ class NewVisitorTest(unittest.TestCase):
         self.assertIn("Edit", self.browser.title)
         self.assertIn('group/new', self.browser.current_url)
         self.assertTrue(self.browser.find_element_by_id('edit_group_submit'))
+
+        # She clicks submit without filling out the form, and the form gives her
+        # an error message reminding her to fill out the required fields.
+        self.assertEqual("",
+            self.browser.find_element_by_id('new_group_message').text)
+        self.browser.find_element_by_id('edit_group_submit').click()
+        self.assertIn("The name field is required.",
+            self.browser.find_element_by_class_name('errorlist').text)
+
+        # She fills out the required fields and is taken to a new page where she can
+        # see the contact details.
+        name_input = self.browser.find_element_by_id('id_name')
+        name_input.send_keys("Scoobies")
+        self.browser.find_element_by_id('edit_group_submit').click()
+        self.assertIn("Group Details", self.browser.title)
 
         # She selects one of the existing groups and clicks 'save'. The contact
         # view now displays that the contact is in a group.

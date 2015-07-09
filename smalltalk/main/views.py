@@ -85,7 +85,7 @@ def create_new_group(request):
 
 class GroupDetail(DetailView):
     model = Group
-    template_name = "contact.html"
+    template_name = "group.html"
 
 class GroupEdit(UpdateView):
     model = Group
