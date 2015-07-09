@@ -1,9 +1,12 @@
+import time
+import unittest
+
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
-import time
-import unittest
+from main.models import Contact, Group
+
 
 class NewVisitorTest(unittest.TestCase):
 
@@ -13,6 +16,9 @@ class NewVisitorTest(unittest.TestCase):
 
     def tearDown(self):
         self.browser.quit()
+        # Currently tests against "real" db.  Need to fix.
+        Contact.objects.all().delete()
+        Group.objects.all().delete()
 
     def test_can_create_a_contact(self):
         # Buffy has heard about a cool new online app.  She goes to check out
