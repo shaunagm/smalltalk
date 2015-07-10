@@ -5,6 +5,7 @@ from main import views
 
 urlpatterns = [
     url(r'^$', ensure_csrf_cookie(views.IndexView.as_view()), name='home'),
+    url(r'^contact/all/$', views.ContactList.as_view(), name='contact_list_view'),
     url(r'^contact/new/$', views.ContactCreate.as_view(), name='new_contact_view'),
     url(r'^contact/(?P<pk>[0-9]+)/$', views.ContactDetail.as_view(), name='contact_detail'),
     url(r'^contact/(?P<pk>[0-9]+)/edit$', views.ContactEdit.as_view(), name='contact_edit'),

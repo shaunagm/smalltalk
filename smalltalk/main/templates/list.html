@@ -1,0 +1,23 @@
+{% extends "index.html" %}
+
+{% block title %}
+
+    Show All
+
+{% endblock title %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+
+            {% for object in object_list %}
+
+                <a href="{{ object.get_url }}">{{ object.name }}</a> {{ object.details }}
+
+            {% endfor %}
+
+        </div>
+    </div>
+
+{% endblock content %}

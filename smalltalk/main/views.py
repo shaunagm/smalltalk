@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, CreateView
 from django.http import JsonResponse
@@ -21,6 +21,10 @@ class IndexView(TemplateView):
         return context
 
 ### Contact Views ###
+
+class ContactList(ListView):
+    model = Contact
+    template_name = "list.html"
 
 class ContactCreate(CreateView):
     form_class = ContactForm
