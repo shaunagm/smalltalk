@@ -98,3 +98,6 @@ class GroupEdit(UpdateView):
 
     def get_success_url(self, **kwargs):
         return self.object.get_url()
+
+def manage_groups_for_contact(request):
+    return JsonResponse(json.dumps({'status': 'success!!!'}), safe=False)

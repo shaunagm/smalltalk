@@ -12,9 +12,36 @@ $( document ).ready(function() {
 
     $("#new_group_submit").click(new_group_submit());
 
+    $("#manage_group_button").click(manage_groups());
 
 });
 
+function manage_groups() {
+
+    // Load Groups
+
+    $.ajax({
+        url: '/manage_groups_for_contact',
+        type: 'POST',
+        data: {'name': $("#contact-name").val()},
+        dataType: 'json',
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        },
+        success: function(data, textStatus, jqXHR) {
+            console.log(jqXHR);
+        },
+        error: function (response) {
+            console.log(response);
+        }});
+
+    // Update Groups
+
+    // Return a list of all groups names, along with whether the user is a part of those
+    // groups.  Use that to create a list of checkboxes, with the ones the user is a part
+    // of already highlighted.  At the bottom, have an "update groups" submit button.
+
+}
 
 
 
@@ -58,7 +85,7 @@ function new_contact_submit() {
         error: function (response) {
             console.log(response);
             $("#new_contact_message").html("There was an error with the site.");
-        }
+        }});
 };
 
 function new_group_submit() {
@@ -85,7 +112,6 @@ function new_group_submit() {
             error: function (response) {
                 console.log(response);
                 $("#new_group_message").html("There was an error with the site.");
-            }
-        });
+            }});
 
 };

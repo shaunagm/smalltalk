@@ -16,5 +16,7 @@ urlpatterns = [
     url(r'^group/(?P<pk>[0-9]+)/$', views.GroupDetail.as_view(), name='group_detail'),
     url(r'^group/(?P<pk>[0-9]+)/edit$', views.GroupEdit.as_view(), name='group_edit'),
 
+    url(r'^manage_groups_for_contact$', views.manage_groups_for_contact, name='manage_groups_for_contact'),
+
     # url(r'^admin/', include(admin.site.urls)),
 ]
