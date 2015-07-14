@@ -1,0 +1,19 @@
+
+<h3>Groups <button type="button" class="btn btn-default btn-sm" id="manage_group_button">Manage</button> </h3>
+
+    {% ifequal object.group_set.count 0 %}
+
+        <p>This contact is not in any groups.</p>
+
+    {% else %}
+
+        {% for group in object.group_set.all %}
+
+            <a href="#"> {{ group.name }}</a>
+
+        {% endfor %}
+
+    {% endifequal %}
+
+<div class="inline_group_div">
+</div>
