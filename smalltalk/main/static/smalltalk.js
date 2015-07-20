@@ -12,7 +12,10 @@ $( document ).ready(function() {
 
     $("#new_group_submit").click(new_group_submit);
 
-    $("#manage_group_button").click(manage_groups);
+    $("#load_group_manager").click(load_group_manager);
+
+    $("#update_group_manager").click(update_group_manager);
+
 
 });
 
@@ -32,12 +35,10 @@ function getCookie(name) {
     return cookieValue;
 };
 
-function manage_groups() {
-
-    // Load Groups
+function load_group_manager() {
 
     $.ajax({
-        url: '/manage_groups_for_contact',
+        url: '/load_group_manager',
         type: 'POST',
         data: {'name': $("#contact_name").text()},
         dataType: 'json',
@@ -45,12 +46,14 @@ function manage_groups() {
             xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
         },
         success: function(data, textStatus, jqXHR) {
-            var d = $.parseJSON(data);
+            $("#manage_group_prompt").show();
+            $("#update_group_manager").show()
             $("#inline_group_div").html('<div class="btn-group" data-toggle="buttons">');
+            var d = $.parseJSON(data);
             for (var key in d.data) {
                 var group = d.data[key];
                 group_html =  '<label class="btn btn-primary active">' +
-                    '<input type="checkbox" autocomplete="off"';
+                    '<input type="checkbox" autocomplete="off" class="group_input"';
                 if (group['in_group'] == 1 ) {
                     group_html += " checked";
                 }
@@ -62,17 +65,33 @@ function manage_groups() {
         error: function (response) {
             console.log(response);
         }});
+};
 
-    // Update Groups
+function create_dict_from_form(selector) {
+    var input_dict = [];
+    $(selector).each(function() {
+        input_dict.push({key: $(this).parent().text(), value: $(this).prop('checked')});
+    });
+    return input_dict;
+};
 
-    // Return a list of all groups names, along with whether the user is a part of those
-    // groups.  Use that to create a list of checkboxes, with the ones the user is a part
-    // of already highlighted.  At the bottom, have an "update groups" submit button.
+function update_group_manager() {
 
-    // Put control buttons in template but set to hidden until manage is pressed.
-
-}
-
+    $.ajax({
+        url: '/update_group_manager',
+        type: 'POST',
+        data: {'group_list' : JSON.stringify(create_dict_from_form(".group_input"))},
+        dataType: 'json',
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        },
+        success: function(data, textStatus, jqXHR) {
+            console.log("success");
+        },
+        error: function (response) {
+            console.log(response);
+        }});
+};
 
 
 

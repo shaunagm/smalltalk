@@ -113,7 +113,7 @@ class GroupList(ListView):
         context['object_type'] = "Groups"
         return context
 
-def manage_groups_for_contact(request):
+def load_group_manager(request):
     name = request.POST.get('name', None)
     if name:
         contact = Contact.objects.get(name=name)
@@ -127,3 +127,14 @@ def manage_groups_for_contact(request):
         else:
             return JsonResponse(json.dumps({'status': 'Please create some groups.'}), safe=False)
     return JsonResponse(json.dumps({'status': 'There was a servor error.'}), safe=False)
+
+def update_group_manager(request):
+    group_list = request.POST.get('group_list', None)
+    if group_list:
+        for group in json.loads(group_list):
+            
+            print(group['key'])
+            print(group['value'])
+        return JsonResponse(json.dumps({'status': 'There was a servor error.'}), safe=False)
+    else:
+        return JsonResponse(json.dumps({'status': 'There was a servor error.'}), safe=False)
