@@ -100,4 +100,16 @@ class GroupEdit(UpdateView):
         return self.object.get_url()
 
 def manage_groups_for_contact(request):
-    return JsonResponse(json.dumps({'status': 'success!!!'}), safe=False)
+    name = request.POST.get('name', None)
+    if name:
+        contact = Contact.objects.get(name=name)
+        groups = Group.objects.all()
+        responses = []
+        for group in groups:
+            in_group = 1 if contact in group.contacts.all() else 0
+            responses.append({'group_name': group.name, 'in_group': in_group})
+        if len(responses) > 0:
+            return JsonResponse(json.dumps({'status': 'success', 'data': responses}), safe=False)
+        else:
+            return JsonResponse(json.dumps({'status': 'Please create some groups.'}), safe=False)
+    return JsonResponse(json.dumps({'status': 'There was a servor error.'}), safe=False)
