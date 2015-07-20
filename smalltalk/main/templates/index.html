@@ -42,8 +42,9 @@
                         <a href="#" class="dropdown-toggle" id="contact_dropdown_toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Contacts <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'new_contact_view' %}" id="nav_new_contact">New Contact</a></li>
+                            <li><a href="{% url 'contact_list_view' %}" id="nav_show_contacts">Show All Contacts</a></li>
                             <li><a href="{% url 'new_group_view' %}" id="nav_new_group">New Group</a></li>
-                            <li><a href="{% url 'contact_list_view' %}" id="nav_show_contacts">Show All</a></li>
+                            <li><a href="{% url 'group_list_view' %}" id="nav_show_groups">Show All Groups</a></li>
                         </ul>
                     </li>
                 </ul>

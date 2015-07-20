@@ -26,6 +26,11 @@ class ContactList(ListView):
     model = Contact
     template_name = "list.html"
 
+    def get_context_data(self, **kwargs):
+        context = super(ContactList, self).get_context_data(**kwargs)
+        context['object_type'] = "Contacts"
+        return context
+
 class ContactCreate(CreateView):
     form_class = ContactForm
     template_name = "contact_edit.html"
@@ -98,6 +103,15 @@ class GroupEdit(UpdateView):
 
     def get_success_url(self, **kwargs):
         return self.object.get_url()
+
+class GroupList(ListView):
+    model = Group
+    template_name = "list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupList, self).get_context_data(**kwargs)
+        context['object_type'] = "Groups"
+        return context
 
 def manage_groups_for_contact(request):
     name = request.POST.get('name', None)
