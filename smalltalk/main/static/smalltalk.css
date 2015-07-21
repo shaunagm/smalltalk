@@ -1,3 +1,7 @@
 #contact_form_container, #group_form_container {
     display: none;
 }
+
+#inline_group_div {
+    display: none;
+}

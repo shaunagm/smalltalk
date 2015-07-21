@@ -1,19 +1,36 @@
 
-<h3>Groups <button type="button" class="btn btn-default btn-sm" id="manage_group_button">Manage</button> </h3>
+<h3>Groups
+    <button type="button" class="btn btn-default btn-sm" id="load_group_manager"
+        onClick="$('#inline_group_div').show()">Manage</button> </h3>
 
-    {% ifequal object.group_set.count 0 %}
+    <div id="group_list">
+        {% ifequal object.group_set.count 0 %}
 
-        <p>This contact is not in any groups.</p>
+            <p>This contact is not in any groups.</p>
 
-    {% else %}
+        {% else %}
 
-        {% for group in object.group_set.all %}
+            {% for group in object.group_set.all %}
 
-            <a href="#"> {{ group.name }}</a>
+                <a href="{{ group.get_url }}"> {{ group.name }}</a>
 
-        {% endfor %}
+            {% endfor %}
 
-    {% endifequal %}
+        {% endifequal %}
+    </div id="group_list">
 
-<div id="inline_group_div">
-</div>
+    <div id="inline_group_div">
+
+        <form method="POST" id="group_manage_form">
+
+            {% csrf_token %}
+
+            {{ manage_group_form }}
+
+        </form>
+
+        <button id="manage_group_submit" class="btn btn-default" href="#">Save</button>
+        <button id="manage_group_close" class="btn btn-default" href="#"
+            onClick="$('#inline_group_div').hide()">Close</button>
+
+    </div>
