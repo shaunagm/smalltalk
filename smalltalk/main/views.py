@@ -43,7 +43,11 @@ class ContactDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ContactDetail, self).get_context_data(**kwargs)
-        context['manage_group_form'] = ManageGroupsForm(contact=self.object)
+        if Group.objects.all():
+            context['manage_group_form'] = ManageGroupsForm(contact=self.object)
+        else:
+            context['no_groups_message'] = "You do not have any groups.  Why don't you" \
+                " try <a href='/group/new/'>adding some</a>?"
         context['object_type'] = "Contact"
         return context
 
