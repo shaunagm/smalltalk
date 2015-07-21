@@ -6,7 +6,7 @@ from django.views.generic.edit import UpdateView, CreateView
 from django.http import JsonResponse
 
 from .models import Contact, Group
-from .forms import ContactForm, GroupForm, ManageGroupsForm
+from .forms import ContactForm, GroupForm, ManageContactsForm, ManageGroupsForm
 
 from django.views.decorators.csrf import requires_csrf_token
 from django.shortcuts import render
@@ -81,6 +81,16 @@ class GroupDetail(DetailView):
     model = Group
     template_name = "group.html"
 
+    def get_context_data(self, **kwargs):
+        context = super(GroupDetail, self).get_context_data(**kwargs)
+        if Contact.objects.all():
+            context['manage_contact_form'] = ManageContactsForm(group=self.object)
+        else:
+            context['no_contacts_message'] = "You do not have any contacts.  Why don't you" \
+                " try <a href='/contact/new/'>adding some</a>?"
+        context['object_type'] = "Group"
+        return context
+
 class GroupEdit(UpdateView):
     model = Group
     fields = ['shortname', 'details']
@@ -118,6 +128,24 @@ def update_group_manager(request):
         current_group_dict = [{'name': group.shortname, 'url': group.get_url()}
             for group in grouped_object.group_set.all()]
         return JsonResponse({'status': 'Success', 'current_groups': current_group_dict})
+    return JsonResponse(json.dumps({'status': 'There was a servor error.'}), safe=False)
+
+def update_contact_manager(request):
+    posted_form = request.POST.get('contact_manage_form', None)
+    contacted_object_type = request.POST.get('contacted_object_type', None)
+    contacted_object_pk = request.POST.get('contacted_object_pk', None)
+    if posted_form and contacted_object_type and contacted_object_pk:
+        if contacted_object_type == "Group":
+            contacted_object = Group.objects.get(pk = int(contacted_object_pk))
+        else:
+            pass # Topic object goes here.
+        form_data = json.loads(posted_form)
+        selected_contacts = set([int(contact['pk']) for contact in form_data
+            if contact['checked'] == True])
+        contacted_object.adjust_contacts(selected_contacts)
+        current_contact_dict = [{'name': contact.shortname, 'url': contact.get_url()}
+            for contact in contacted_object.contacts.all()]
+        return JsonResponse({'status': 'Success', 'current_contacts': current_contact_dict})
     return JsonResponse(json.dumps({'status': 'There was a servor error.'}), safe=False)
 
 def create_new_contact(request):

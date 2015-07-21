@@ -14,7 +14,40 @@ $( document ).ready(function() {
 
     $("#manage_group_submit").click(update_group_manager);
 
+    $("#manage_contact_submit").click(update_contact_manager);
 });
+
+function update_contact_manager() {
+
+    var input_dict = [];
+    $("#id_contacts").find("input[type=checkbox]").each(function() {
+        input_dict.push({pk: $(this).val(), checked: $(this).prop('checked')});
+    })
+
+    $.ajax({
+        url: '/update_contact_manager',
+        type: 'POST',
+        data: {'contact_manage_form': JSON.stringify(input_dict),
+        'contacted_object_type': $("#object-details").attr("object-type"),
+        'contacted_object_pk': $("#object-details").attr("object-pk")},
+        dataType: 'json',
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        },
+        success: function(data, textStatus, jqXHR) {
+            $("#contact_list").empty()
+            for (var key in data['current_contacts']) {
+                contact = data['current_contacts'][key];
+                html_string = "<a href='" + contact['url'] + "'>" + contact['name'] + "</a> ";
+                $("#contact_list").append(html_string)
+            };
+        },
+        error: function (response) {
+            $("#contact_list").empty();
+            $("#contact_list").append("There was an error updating this group's contacts.");
+        }
+    });
+};
 
 function update_group_manager() {
 

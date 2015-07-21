@@ -48,6 +48,6 @@ class Group(models.Model):
         for pk in pk_set - contact_pks:
             contact = Contact.objects.get(pk=pk)
             self.contacts.add(contact)
-        for pk in group_pks - pk_set:
+        for pk in contact_pks - pk_set:
             contact = Contact.objects.get(pk=pk)
             self.contacts.remove(contact)

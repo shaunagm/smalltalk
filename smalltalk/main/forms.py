@@ -17,6 +17,19 @@ class GroupForm(forms.ModelForm):
         model = Group
         fields = ['shortname', 'details']
 
+class ManageContactsForm(forms.ModelForm):
+    contacts = forms.ModelChoiceField(queryset=Contact.objects.all(),
+        widget=forms.CheckboxSelectMultiple, empty_label=None)
+
+    class Meta:
+        model = Group
+        fields = ['contacts']
+
+    def __init__(self, *args, **kwargs):
+        group = kwargs.pop('group', 0)
+        super(ManageContactsForm, self).__init__(*args, **kwargs)
+        self.fields['contacts'].initial = [contact.pk for contact in group.contacts.all()]
+
 class ManageGroupsForm(forms.ModelForm):
     groups = forms.ModelChoiceField(queryset=Group.objects.all(),
         widget=forms.CheckboxSelectMultiple, empty_label=None)
