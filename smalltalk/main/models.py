@@ -25,6 +25,7 @@ class Contact(models.Model):
         for pk in group_pks - pk_set:
             group = Group.objects.get(pk=pk)
             self.group_set.remove(group)
+        return self.group_set.all()
 
 class Group(models.Model):
     shortname = models.CharField(max_length=100, unique=True)
@@ -51,3 +52,4 @@ class Group(models.Model):
         for pk in contact_pks - pk_set:
             contact = Contact.objects.get(pk=pk)
             self.contacts.remove(contact)
+        return self.contacts.all()

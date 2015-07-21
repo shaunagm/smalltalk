@@ -18,9 +18,7 @@ urlpatterns = [
     url(r'^group/(?P<pk>[0-9]+)/edit$', views.GroupEdit.as_view(), name='group_edit'),
     url(r'^new_group$', views.create_new_group, name='new_group'),
 
-    url(r'^update_group_manager$', views.update_group_manager, name='update_group_manager'),
-    url(r'^update_contact_manager$', views.update_contact_manager, name='update_contact_manager'),
-
-
+    url(r'^update_manager$', views.update_manager, name='update_manager'),
+    
     # url(r'^admin/', include(admin.site.urls)),
 ]

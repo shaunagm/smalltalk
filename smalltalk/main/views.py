@@ -112,40 +112,23 @@ class GroupList(ListView):
 ### AJAXy Views ###
 ###################
 
-def update_group_manager(request):
-    posted_form = request.POST.get('group_manage_form', None)
-    grouped_object_type = request.POST.get('grouped_object_type', None)
-    grouped_object_pk = request.POST.get('grouped_object_pk', None)
-    if posted_form and grouped_object_type and grouped_object_pk:
-        if grouped_object_type == "Contact":
-            grouped_object = Contact.objects.get(pk = int(grouped_object_pk))
-        else:
-            pass # Topic object goes here.
+def update_manager(request):
+    posted_form = request.POST.get('manage_form', None)
+    object_type = request.POST.get('object_type', None)
+    object_pk = request.POST.get('object_pk', None)
+    if posted_form and object_type and object_pk:
         form_data = json.loads(posted_form)
-        selected_groups = set([int(group['pk']) for group in form_data
-            if group['checked'] == True])
-        grouped_object.adjust_groups(selected_groups)
-        current_group_dict = [{'name': group.shortname, 'url': group.get_url()}
-            for group in grouped_object.group_set.all()]
-        return JsonResponse({'status': 'Success', 'current_groups': current_group_dict})
-    return JsonResponse(json.dumps({'status': 'There was a servor error.'}), safe=False)
-
-def update_contact_manager(request):
-    posted_form = request.POST.get('contact_manage_form', None)
-    contacted_object_type = request.POST.get('contacted_object_type', None)
-    contacted_object_pk = request.POST.get('contacted_object_pk', None)
-    if posted_form and contacted_object_type and contacted_object_pk:
-        if contacted_object_type == "Group":
-            contacted_object = Group.objects.get(pk = int(contacted_object_pk))
-        else:
-            pass # Topic object goes here.
-        form_data = json.loads(posted_form)
-        selected_contacts = set([int(contact['pk']) for contact in form_data
-            if contact['checked'] == True])
-        contacted_object.adjust_contacts(selected_contacts)
-        current_contact_dict = [{'name': contact.shortname, 'url': contact.get_url()}
-            for contact in contacted_object.contacts.all()]
-        return JsonResponse({'status': 'Success', 'current_contacts': current_contact_dict})
+        selected_items = set([int(item['pk']) for item in form_data
+            if item['checked'] == True])
+        if object_type == "Contact":
+            main_object = Contact.objects.get(pk = int(object_pk))
+            final_items = main_object.adjust_groups(selected_items)
+        if object_type == "Group":
+            main_object = Group.objects.get(pk = int(object_pk))
+            final_items = main_object.adjust_contacts(selected_items)
+        current_dict = [{'name': item.shortname, 'url': item.get_url()}
+            for item in final_items]
+        return JsonResponse({'status': 'Success', 'current_dict': current_dict})
     return JsonResponse(json.dumps({'status': 'There was a servor error.'}), safe=False)
 
 def create_new_contact(request):
