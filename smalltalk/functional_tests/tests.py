@@ -54,7 +54,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         # She fills out the required fields and is taken to a new page where she can
         # see the contact details.
-        name_input = self.browser.find_element_by_id('id_name')
+        name_input = self.browser.find_element_by_id('id_shortname')
         name_input.send_keys("Willow Rosenberg")
         self.browser.find_element_by_id('edit_contact_submit').click()
         self.assertIn("Contact Details", self.browser.title)
@@ -76,10 +76,10 @@ class NewVisitorTest(LiveServerTestCase):
         # She decides to add her new contact to a group, so she clicks the
         # "Add to Group(s)" button.  She is informed that she needs to create
         # groups before she can add contacts to them.
-        self.browser.find_element_by_id('add_to_group').click()
-        time.sleep(.5)
+        self.browser.find_element_by_id('load_group_manager').click()
+        time.sleep(5)
         self.assertIn("You do not have any groups.",
-            self.browser.find_element_by_id('group_message').get_attribute('innerHTML'))
+            self.browser.find_element_by_id('group_list').text)
 
         # She clicks the "Create a group" link and is brought to a new page with
         # a form to create a new group.
@@ -99,7 +99,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         # She fills out the required fields and is taken to a new page where she can
         # see the contact details.
-        name_input = self.browser.find_element_by_id('id_name')
+        name_input = self.browser.find_element_by_id('id_shortname')
         name_input.send_keys("Scoobies")
         self.browser.find_element_by_id('edit_group_submit').click()
         self.assertIn("Group Details", self.browser.title)
@@ -119,7 +119,37 @@ class NewVisitorTest(LiveServerTestCase):
             self.browser.find_element_by_id('group_details').text)
 
 
-    def test_can_create_topics(self):
+    def test_can_add_and_remove_contact_from_group(self):
+        # Now that Buffy has made a group, she can start adding contacts to them.
+        # She goes to her lists of Contacts and selects Giles.
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_contacts').click()
+        self.assertIn('contact/all', self.browser.current_url)
+
+        # Giles' page shows no groups listed, so she clicks the button labeled
+        # "Manage Groups"  She is shown a list of groups.
+
+        # She selects two of the groups and clicks submit.  The page now lists Giles
+        # as being in those two groups.
+
+        # Buffy wonders if she can add contacts from the group page, so she
+        # navigates to the 'Faculty' group and clicks, "Manage Contacts".  She sees
+        # a list of all of her contacts.
+
+        # Buffy selects Snyder and Willow and clicks submit.  It takes her back to
+        # the Scoobies page which now lists Willow and Snyder.
+
+        # Buffy realizes that she doesn't want Snyder in the Scoobies group. She
+        # selects "Manage Contacts" again.  She deselects Snyder and selects Giles,
+        # and clicks submit.
+
+        # It takes her back to the Scoobies page, which lists Willow and Giles.
+        # Buffy is satisfied.
+
+        self.fail('Finish the test!')
+
+
+    # def test_can_create_topics(self):
         # Buffy sees a prompt to create a new topic.  She clicks it and is brought
         # to a new page with a topic creation form.
 
@@ -136,9 +166,6 @@ class NewVisitorTest(LiveServerTestCase):
         # There, she adds some information to the details field.
 
         # Once she saves her changes, the new contact view is updated.
-
-        pass
-    #    self.fail('Finish the test!')
 
 
     # def test_can_view_lists_of_info(self):
