@@ -12,34 +12,37 @@ $( document ).ready(function() {
 
     $("#new_group_submit").click(new_group_submit);
 
-    $("#manage_group_submit").click(update_manager("group"));
+    $("#manage_group_submit").click(update_manager);
 
-    $("#manage_contact_submit").click(update_manager("contact"));
+    $("#manage_contact_submit").click(update_manager);
 });
 
-function update_manager(type) {
+function update_manager() {
 
-    if (type == "contact") {
+    var object_type = $("#object-details").attr("object-type");
+
+    if (object_type == "Group") {
         var read_element = "#id_contacts";
         var write_element = "#contact_list";
         var error_message = "There was an error updating this group's contacts.";
-    } else {
+    };
+
+    if (object_type == "Contact") {
         var read_element = "#id_groups";
         var write_element = "#group_list";
         var error_message = "There was an error updating this contact's groups";
     };
 
     var input_dict = [];
-        $(read_element).find("input[type=checkbox]").each(function() {
-            input_dict.push({pk: $(this).val(), checked: $(this).prop('checked')});
-        })
-    };
+    $(read_element).find("input[type=checkbox]").each(function() {
+        input_dict.push({pk: $(this).val(), checked: $(this).prop('checked')});
+    });
 
     $.ajax({
         url: '/update_manager',
         type: 'POST',
         data: {'manage_form': JSON.stringify(input_dict),
-        'object_type': $("#object-details").attr("object-type"),
+        'object_type': object_type,
         'object_pk': $("#object-details").attr("object-pk")},
         dataType: 'json',
         beforeSend: function(xhr, settings) {
@@ -54,9 +57,8 @@ function update_manager(type) {
         },
         error: function (response) {
             $(write_element).empty();
-            $(write_element)).append("");
-        }
-    });
+            $(write_element).append(error_message);
+        }});
 };
 
 function new_contact_submit() {
