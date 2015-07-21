@@ -4,9 +4,9 @@
         onClick="$('#inline_group_div').show()">Manage</button> </h3>
 
     <div id="group_list">
-        {% ifequal object.group_set.count 0 %}
+        {% if no_groups_message %}
 
-            <p>This contact is not in any groups.</p>
+            {{ no_groups_message | safe }}
 
         {% else %}
 
@@ -16,7 +16,7 @@
 
             {% endfor %}
 
-        {% endifequal %}
+        {% endif %}
     </div id="group_list">
 
     <div id="inline_group_div">

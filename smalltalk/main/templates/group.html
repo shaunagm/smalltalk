@@ -1,23 +1,11 @@
-{% extends "index.html" %}
+{% extends "detail.html" %}
 
-{% block title %}
+{% block inner-content %}
 
-    {{ object.name }} Group Details
+    <h1 id="group_name">{{ object.name }}</h1>
+    <h3 id="group_details">{{ object.details}}</h3>
+    <h2><a id="group_edit" href="{% url 'group_edit' object.pk %}">Edit</a></h2>
 
-{% endblock title %}
+    {% include 'contact_inline.html' %}
 
-{% block content %}
-
-    <div class="row">
-        <div class="col-md-10 col-md-offset-1">
-
-            <h1 id="group_name">{{ object.name }}</h1>
-            <h3 id="group_details">{{ object.details}}</h3>
-            <h2><a id="group_edit" href="{% url 'group_edit' object.pk %}">Edit</a></h2>
-
-            {% include 'contact_dropdown.html' %}
-
-        </div>
-    </div>
-
-{% endblock content %}
+{% endblock inner-content %}

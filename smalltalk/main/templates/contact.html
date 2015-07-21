@@ -1,25 +1,11 @@
-{% extends "index.html" %}
+{% extends "detail.html" %}
 
-{% block title %}
+{% block inner-content %}
 
-    {{ object.name }} Contact Details
+    <h1 id="contact_name">{{ object.name }}</h1>
+    <h3 id="contact_details">{{ object.details}}</h3>
+    <h2><a id="contact_edit" href="{% url 'contact_edit' object.pk %}">Edit</a></h2>
 
-{% endblock title %}
+    {% include 'group_inline.html' %}
 
-{% block content %}
-
-    <span id="object-details" object-type="{{ object_type }}" object-pk="{{ object.pk }}"></span>
-
-    <div class="row">
-        <div class="col-md-10 col-md-offset-1">
-
-            <h1 id="contact_name">{{ object.name }}</h1>
-            <h3 id="contact_details">{{ object.details}}</h3>
-            <h2><a id="contact_edit" href="{% url 'contact_edit' object.pk %}">Edit</a></h2>
-
-            {% include 'group_inline.html' %}
-
-        </div>
-    </div>
-
-{% endblock content %}
+{% endblock inner-content %}
