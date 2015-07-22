@@ -45,6 +45,8 @@ class ContactDetail(DetailView):
         context = super(ContactDetail, self).get_context_data(**kwargs)
         if Group.objects.all():
             context['manage_group_form'] = ManageGroupsForm(contact=self.object)
+            if not self.object.group_set.all():
+                context['no_groups_message'] = "This contact has no groups listed."
         else:
             context['no_groups_message'] = "You do not have any groups.  Why don't you" \
                 " try <a href='/group/new/'>adding some</a>?"
@@ -85,9 +87,11 @@ class GroupDetail(DetailView):
         context = super(GroupDetail, self).get_context_data(**kwargs)
         if Contact.objects.all():
             context['manage_contact_form'] = ManageContactsForm(group=self.object)
+            if not self.object.contacts.all():
+                context['no_contacts_message'] = "This group has no contacts listed."
         else:
             context['no_contacts_message'] = "You do not have any contacts.  Why don't you" \
-                " try <a href='/contact/new/'>adding some</a>?"
+                " try <a href='/contact/new/'>creating some</a>?"
         context['object_type'] = "Group"
         return context
 

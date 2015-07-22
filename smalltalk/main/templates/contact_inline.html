@@ -8,15 +8,14 @@
 
             {{ no_contacts_message | safe }}
 
-        {% else %}
-
-            {% for contact in object.contacts.all %}
-
-                <a href="{{ contact.get_url }}"> {{ contact.name }}</a>
-
-            {% endfor %}
-
         {% endif %}
+
+        {% for contact in object.contacts.all %}
+
+            <a href="{{ contact.get_url }}"> {{ contact.name }}</a>
+
+        {% endfor %}
+
     </div>
 
     <div id="inline_contact_div">
