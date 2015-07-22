@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Contact, Group
+from .models import Contact, Group, Topic
 
 class ContactForm(forms.ModelForm):
     shortname = forms.CharField(error_messages={'required': 'The name field is required.'})
@@ -16,6 +16,13 @@ class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
         fields = ['shortname', 'details']
+
+class TopicForm(forms.ModelForm):
+    shortname = forms.CharField(error_messages={'required': 'The name field is required.'})
+
+    class Meta:
+        model = Topic
+        fields = ['shortname', 'details', 'link']
 
 class ManageContactsForm(forms.ModelForm):
     contacts = forms.ModelChoiceField(queryset=Contact.objects.all(),

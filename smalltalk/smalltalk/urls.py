@@ -18,7 +18,12 @@ urlpatterns = [
     url(r'^group/(?P<pk>[0-9]+)/edit$', views.GroupEdit.as_view(), name='group_edit'),
     url(r'^new_group$', views.create_new_group, name='new_group'),
 
+    url(r'^topic/all/$', views.TopicList.as_view(), name='topic_list_view'),
+    url(r'^topic/new/$', views.TopicCreate.as_view(), name='new_topic_view'),
+    url(r'^topic/(?P<pk>[0-9]+)/$', views.TopicDetail.as_view(), name='topic_detail'),
+    url(r'^topic/(?P<pk>[0-9]+)/edit$', views.TopicEdit.as_view(), name='topic_edit'),
+
     url(r'^update_manager$', views.update_manager, name='update_manager'),
-    
+
     # url(r'^admin/', include(admin.site.urls)),
 ]

@@ -53,3 +53,17 @@ class Group(models.Model):
             contact = Contact.objects.get(pk=pk)
             self.contacts.remove(contact)
         return self.contacts.all()
+
+class Topic(models.Model):
+    shortname = models.CharField(max_length=100, unique=True)
+    details = models.TextField(max_length=5000, blank=True)
+    link = models.CharField(max_length=200, blank=True)
+
+    def name(self):
+        return self.shortname
+
+    def __str__(self):
+        return self.shortname
+
+    def get_url(self):
+        return reverse('topic_detail', args=[self.pk])

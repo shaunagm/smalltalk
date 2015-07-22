@@ -1,0 +1,11 @@
+{% extends "detail.html" %}
+
+{% block inner-content %}
+
+    <h1 id="topic_name">{{ object.name }}</h1>
+    <h3 id="topic_details">{{ object.details}}</h3>
+    <h3 id="topic_link">{{ object.link}}</h3>
+
+    <h2><a id="topic_edit" href="{% url 'topic_edit' object.pk %}">Edit</a></h2>
+
+{% endblock inner-content %}

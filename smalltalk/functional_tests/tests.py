@@ -119,25 +119,57 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertIn("We laugh in the face of danger.",
             self.browser.find_element_by_id('group_details').text)
 
-        # Add test: try to add contacts when there are none there.
+        # She decides to add a new contact to her group, so she clicks the
+        # "Manage Contacts button.  She is informed that she needs to create
+        # contacts before she can add groups to them.
+        self.browser.find_element_by_id('load_contact_manager').click()
+        time.sleep(.5)
+        self.assertIn("You do not have any contacts.",
+            self.browser.find_element_by_id('contact_list').text)
 
-    # def test_can_create_topics(self):
+    def test_can_create_topics(self):
         # Buffy sees a prompt to create a new topic.  She clicks it and is brought
         # to a new page with a topic creation form.
+        self.browser.find_element_by_id('topic_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_new_topic').click()
+        self.assertIn("Edit", self.browser.title)
+        self.assertIn('topic/new', self.browser.current_url)
+        self.assertTrue(self.browser.find_element_by_id('edit_topic_submit'))
 
         # She clicks submit without filling out the form, and the form gives her
         # an error message reminding her to fill out the required fields (details &
         # name this time).
+        self.browser.find_element_by_id('edit_topic_submit').click()
+        self.assertEqual("",
+            self.browser.find_element_by_id('new_topic_message').text)
+        self.browser.find_element_by_id('edit_topic_submit').click()
+        self.assertIn("The name field is required.",
+            self.browser.find_element_by_class_name('errorlist').text)
 
-        # She fills out the required fields and is taken to a new page where she can
+        # She fills out the other fields and is taken to a new page where she can
         # see the topic details.
+        name_input = self.browser.find_element_by_id('id_shortname')
+        name_input.send_keys("Selkies")
+        self.browser.find_element_by_id('edit_topic_submit').click()
+        self.assertIn("Selkies Details", self.browser.title)
 
         # She decides she wants to add additional information to the topic, so
         # she clicks the "edit" button.
+        self.browser.find_element_by_id('topic_edit').click()
+        self.assertIn("Edit", self.browser.title)
 
-        # There, she adds some information to the details field.
+        # There, she adds info to the details and links fields.
+        details_input = self.browser.find_element_by_id('id_details')
+        details_input.send_keys("Are they a thing?")
+        link_input = self.browser.find_element_by_id('id_link')
+        link_input.send_keys("https://en.wikipedia.org/wiki/Selkie")
 
         # Once she saves her changes, the new contact view is updated.
+        self.browser.find_element_by_id('edit_topic_submit').click()
+        self.assertIn("Are they a thing?",
+            self.browser.find_element_by_id('topic_details').text)
+
+        # self.fail('Finish the test!')
 
 class ReturningVisitorTest(LiveServerTestCase):
 

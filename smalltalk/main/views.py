@@ -5,8 +5,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, CreateView
 from django.http import JsonResponse
 
-from .models import Contact, Group
-from .forms import ContactForm, GroupForm, ManageContactsForm, ManageGroupsForm
+from .models import Contact, Group, Topic
+from .forms import ContactForm, GroupForm, TopicForm, ManageContactsForm, ManageGroupsForm
 
 from django.views.decorators.csrf import requires_csrf_token
 from django.shortcuts import render
@@ -111,6 +111,40 @@ class GroupList(ListView):
         context = super(GroupList, self).get_context_data(**kwargs)
         context['object_type'] = "Groups"
         return context
+
+###################
+### Topic Views ###
+###################
+
+class TopicList(ListView):
+    model = Topic
+    template_name = "list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(TopicList, self).get_context_data(**kwargs)
+        context['object_type'] = "Topics"
+        return context
+
+class TopicDetail(DetailView):
+    model = Topic
+    template_name = "topic.html"
+
+
+class TopicCreate(CreateView):
+    form_class = TopicForm
+    template_name = "topic_edit.html"
+
+    def get_success_url(self, **kwargs):
+        return self.object.get_url()
+
+class TopicEdit(UpdateView):
+    model = Topic
+    fields = ['shortname', 'details', 'link']
+    template_name = "topic_edit.html"
+
+    def get_success_url(self, **kwargs):
+        return self.object.get_url()
+
 
 ###################
 ### AJAXy Views ###

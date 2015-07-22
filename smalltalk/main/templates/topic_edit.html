@@ -1,0 +1,18 @@
+{% extends "detail.html" %}
+
+{% block title %}
+
+Edit {{ object.name }} Topic Details
+
+{% endblock title %}
+
+{% block inner-content %}
+
+<span id="new_topic_message"></span>
+<form name="form" method="post" action="">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit" class="btn btn-default" id="edit_topic_submit">Submit</button>
+</form>
+
+{% endblock inner-content %}
