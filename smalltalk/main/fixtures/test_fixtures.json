@@ -1,18 +1,61 @@
 [
 {
-    "model": "main.contact",
-    "pk": 2,
     "fields": {
         "shortname": "Snyder",
         "details": "WOOOOSAD"
-    }
+    },
+    "pk": 2,
+    "model": "main.contact"
 },
 {
-    "model": "main.contact",
-    "pk": 3,
     "fields": {
         "shortname": "Giles",
         "details": "Watcher!??"
-    }
+    },
+    "pk": 3,
+    "model": "main.contact"
+},
+{
+    "fields": {
+        "shortname": "Spike",
+        "details": "\"The truth is, I like this world. You've got... dog racing, Manchester United, and you've got people. Billions of people walking around like Happy Meals with legs.\""
+    },
+    "pk": 4,
+    "model": "main.contact"
+},
+{
+    "fields": {
+        "shortname": "Cordelia",
+        "details": "\"Tact is just not saying true stuff. I'll pass.\""
+    },
+    "pk": 5,
+    "model": "main.contact"
+},
+{
+    "fields": {
+        "contacts": [],
+        "shortname": "People",
+        "details": "People who need people are the luckiest people in the world."
+    },
+    "pk": 4,
+    "model": "main.group"
+},
+{
+    "fields": {
+        "contacts": [],
+        "shortname": "Scoobies",
+        "details": "They fight evil!"
+    },
+    "pk": 5,
+    "model": "main.group"
+},
+{
+    "fields": {
+        "contacts": [],
+        "shortname": "Vampires",
+        "details": "People who eat people are the worst kind of people in the world."
+    },
+    "pk": 6,
+    "model": "main.group"
 }
 ]

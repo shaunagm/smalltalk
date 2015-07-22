@@ -9,9 +9,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
-class NewVisitorTest(LiveServerTestCase):
 
-    fixtures = ['test_fixtures']
+class NewVisitorTest(LiveServerTestCase):
 
     def __init__(self, *args, **kwargs):
         super(NewVisitorTest, self).__init__(*args, **kwargs)
@@ -35,7 +34,7 @@ class NewVisitorTest(LiveServerTestCase):
         # Buffy's over it.
         self.browser.quit()
 
-    def test_can_create_contacts_and_groups(self):
+    def test_can_create_contacts(self):
         # Buffy sees a prompt to create a new contact.  She clicks it and is brought
         # to a new page with a contact creation form.
         self.assertIn('New Contact',
@@ -82,7 +81,8 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertIn("You do not have any groups.",
             self.browser.find_element_by_id('group_list').text)
 
-        # She clicks the "Create a group" link and is brought to a new page with
+    def test_can_create_groups(self):
+        # Buffy clicks the "Create a group" link and is brought to a new page with
         # a form to create a new group.
         self.browser.find_element_by_id('contact_dropdown_toggle').click()
         self.browser.find_element_by_id('nav_new_group').click()
@@ -119,57 +119,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertIn("We laugh in the face of danger.",
             self.browser.find_element_by_id('group_details').text)
 
-        # Now that Buffy has made a group, she can start adding contacts to them.
-        # She goes to her lists of Contacts and selects Giles.
-        self.browser.find_element_by_id('contact_dropdown_toggle').click()
-        self.browser.find_element_by_id('nav_show_contacts').click()
-        self.assertIn('contact/all', self.browser.current_url)
-        self.browser.find_element_by_link_text('Giles').click()
-
-        # Giles' page shows no groups listed, so she clicks the button labeled
-        # "Manage Groups"  She is shown a short lsit of groups.
-        self.assertIn("This contact has no groups listed.",
-            self.browser.find_element_by_id('group_list').text)
-        self.browser.find_element_by_id('load_group_manager').click()
-
-        # She selects the group labelled "Scoobies" and clicks submit.  The page
-        # now lists Giles as being in the "Scoobies" group.
-        self.browser.find_element_by_id('id_groups_0').click()
-        self.browser.find_element_by_id('manage_group_submit').click()
-        time.sleep(.5)
-        self.browser.find_element_by_link_text('Scoobies')
-
-        # Buffy wonders if she can add contacts from the group page, so she
-        # navigates to the 'Scoobies' group and clicks, "Manage Contacts".  She sees
-        # a list of all of her contacts.
-        self.browser.find_element_by_link_text('Scoobies').click()
-        self.browser.find_element_by_id('load_contact_manager').click()
-        self.assertEquals(3,
-            len(self.browser.find_elements_by_name('contacts')))
-
-        # Buffy selects Snyder and Willow and clicks submit.  The page now shows
-        # Snyder, Giles, and Willow as part of the Scoobies.
-        self.browser.find_element_by_id('id_contacts_0').click()
-        self.browser.find_element_by_id('id_contacts_2').click()
-        self.browser.find_element_by_id('manage_contact_submit').click()
-        self.browser.find_element_by_link_text('Snyder')
-        self.browser.find_element_by_link_text('Giles')
-        self.browser.find_element_by_link_text('Willow Rosenberg')
-
-        # Buffy closes the manage contacts form, and it disappears.
-        self.browser.find_element_by_id('manage_contact_close').click()
-        self.assertEquals(False,
-            self.browser.find_element_by_id("inline_contact_div").is_displayed())
-
-        # Buffy realizes that she doesn't want Snyder in the Scoobies group. She
-        # selects "Manage Contacts" again.  She deselects Snyder and selects Giles,
-        # and clicks submit.
-        self.browser.find_element_by_id('load_contact_manager').click()
-        self.browser.find_element_by_id('id_contacts_0').click()
-        self.browser.find_element_by_id('manage_contact_submit').click()
-        with self.assertRaises(NoSuchElementException):
-            self.browser.find_element_by_link_text('Snyder')
-
+        # Add test: try to add contacts when there are none there.
 
     # def test_can_create_topics(self):
         # Buffy sees a prompt to create a new topic.  She clicks it and is brought
@@ -189,6 +139,76 @@ class NewVisitorTest(LiveServerTestCase):
 
         # Once she saves her changes, the new contact view is updated.
 
+class ReturningVisitorTest(LiveServerTestCase):
+
+    fixtures = ['test_fixtures']
+
+    def __init__(self, *args, **kwargs):
+        super(ReturningVisitorTest, self).__init__(*args, **kwargs)
+        if settings.DEBUG == False:
+            settings.DEBUG = True
+
+    def setUp(self):
+        # Buffy is returning to the website she found and added data to earlier.
+        self.browser = webdriver.Firefox()
+        self.browser.implicitly_wait(3)
+        self.browser.get('%s' % (self.live_server_url))
+
+    def tearDown(self):
+        # Buffy's over it.
+        self.browser.quit()
+
+    def test_can_link_groups_to_contacts(self):
+        # Buff now has groups and contacts.  She wants to start adding contacts
+        # to her groups, so she goes to her lists of Contacts and selects Giles.
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_contacts').click()
+        self.assertIn('contact/all', self.browser.current_url)
+        self.browser.find_element_by_link_text('Giles').click()
+
+        # Giles' page shows no groups listed, so she clicks the button labeled
+        # "Manage Groups"  She is shown a short list of groups.
+        self.assertIn("This contact has no groups listed.",
+            self.browser.find_element_by_id('group_list').text)
+        self.browser.find_element_by_id('load_group_manager').click()
+
+        # She selects the group labelled "Scoobies" and clicks submit.  The page
+        # now lists Giles as being in the "Scoobies" group.
+        self.browser.find_element_by_id('id_groups_1').click()
+        self.browser.find_element_by_id('manage_group_submit').click()
+        time.sleep(.5)
+        self.browser.find_element_by_link_text('Scoobies')
+
+        # Buffy wonders if she can add contacts from the group page, so she
+        # navigates to the 'Scoobies' group and clicks, "Manage Contacts".  She sees
+        # a list of all of her contacts.
+        self.browser.find_element_by_link_text('Scoobies').click()
+        self.browser.find_element_by_id('load_contact_manager').click()
+        self.assertEquals(4,
+            len(self.browser.find_elements_by_name('contacts')))
+
+        # Buffy selects Snyder and Cordelia and clicks submit.  The page now shows
+        # Snyder, Giles, and Cordelia as part of the Scoobies.
+        self.browser.find_element_by_id('id_contacts_0').click()
+        self.browser.find_element_by_id('id_contacts_3').click()
+        self.browser.find_element_by_id('manage_contact_submit').click()
+        self.browser.find_element_by_link_text('Snyder')
+        self.browser.find_element_by_link_text('Giles')
+        self.browser.find_element_by_link_text('Cordelia')
+
+        # Buffy closes the manage contacts form, and it disappears.
+        self.browser.find_element_by_id('manage_contact_close').click()
+        self.assertEquals(False,
+            self.browser.find_element_by_id("inline_contact_div").is_displayed())
+
+        # Buffy realizes that she doesn't want Snyder in the Scoobies group. She
+        # selects "Manage Contacts" again.  She deselects Snyder and selects Giles,
+        # and clicks submit.
+        self.browser.find_element_by_id('load_contact_manager').click()
+        self.browser.find_element_by_id('id_contacts_0').click()
+        self.browser.find_element_by_id('manage_contact_submit').click()
+        with self.assertRaises(NoSuchElementException):
+            self.browser.find_element_by_link_text('Snyder')
 
     # def test_can_view_lists_of_info(self):
 
