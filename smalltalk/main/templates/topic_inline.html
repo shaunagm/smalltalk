@@ -1,0 +1,35 @@
+
+<h3>Topics
+
+    <button type="button" class="btn btn-default btn-sm" id="load_topic_manager"
+        onClick="$('#inline_topic_div').show()">Manage</button> </h3>
+
+    <div id="topic_list">
+        {% if no_topics_message %}
+
+            {{ no_topics_message | safe }}
+
+        {% endif %}
+
+        {% for topic in object.topic_set.all %}
+
+            <a href="{{ topic.get_url }}"> {{ topic.name }}</a>
+
+        {% endfor %}
+    </div>
+
+    <div id="inline_topic_div">
+
+        <form method="POST" id="topic_manage_form">
+
+            {% csrf_token %}
+
+            {{ manage_topic_form }}
+
+        </form>
+
+        <button id="manage_topic_submit" class="btn btn-default" href="#">Save</button>
+        <button id="manage_topic_close" class="btn btn-default" href="#"
+            onClick="$('#inline_topic_div').hide()">Close</button>
+
+    </div>

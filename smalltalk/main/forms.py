@@ -24,28 +24,29 @@ class TopicForm(forms.ModelForm):
         model = Topic
         fields = ['shortname', 'details', 'link']
 
-class ManageContactsForm(forms.ModelForm):
+class ManageContactsForm(forms.Form):
     contacts = forms.ModelChoiceField(queryset=Contact.objects.all(),
         widget=forms.CheckboxSelectMultiple, empty_label=None)
 
-    class Meta:
-        model = Group
-        fields = ['contacts']
-
     def __init__(self, *args, **kwargs):
-        group = kwargs.pop('group', 0)
+        linked_object = kwargs.pop('linked_object', 0)
         super(ManageContactsForm, self).__init__(*args, **kwargs)
-        self.fields['contacts'].initial = [contact.pk for contact in group.contacts.all()]
+        self.fields['contacts'].initial = [contact.pk for contact in linked_object.contacts.all()]
 
-class ManageGroupsForm(forms.ModelForm):
+class ManageGroupsForm(forms.Form):
     groups = forms.ModelChoiceField(queryset=Group.objects.all(),
         widget=forms.CheckboxSelectMultiple, empty_label=None)
 
-    class Meta:
-        model = Contact
-        fields = ['groups']
+    def __init__(self, *args, **kwargs):
+        linked_object = kwargs.pop('linked_object', 0)
+        super(ManageGroupsForm, self).__init__(*args, **kwargs)
+        self.fields['groups'].initial = [group.pk for group in linked_object.group_set.all()]
+
+class ManageTopicsForm(forms.Form):
+    topics = forms.ModelChoiceField(queryset=Topic.objects.all(),
+        widget=forms.CheckboxSelectMultiple, empty_label=None)
 
     def __init__(self, *args, **kwargs):
-        contact = kwargs.pop('contact', 0)
-        super(ManageGroupsForm, self).__init__(*args, **kwargs)
-        self.fields['groups'].initial = [group.pk for group in contact.group_set.all()]
+        linked_object = kwargs.pop('linked_object', 0)
+        super(ManageTopicsForm, self).__init__(*args, **kwargs)
+        self.fields['topics'].initial = [topic.pk for topic in linked_object.topic_set.all()]

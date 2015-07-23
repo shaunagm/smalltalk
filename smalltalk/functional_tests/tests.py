@@ -57,7 +57,7 @@ class NewVisitorTest(LiveServerTestCase):
         name_input = self.browser.find_element_by_id('id_shortname')
         name_input.send_keys("Willow Rosenberg")
         self.browser.find_element_by_id('edit_contact_submit').click()
-        self.assertIn("Contact Details", self.browser.title)
+        self.assertIn("Willow Rosenberg Contact Details", self.browser.title)
 
         # She decides she wants to add additional information to the contact, so
         # she clicks the "edit" button.
@@ -78,7 +78,7 @@ class NewVisitorTest(LiveServerTestCase):
         # groups before she can add contacts to them.
         self.browser.find_element_by_id('load_group_manager').click()
         time.sleep(.5)
-        self.assertIn("You do not have any groups.",
+        self.assertIn("You do not have any groups to add.",
             self.browser.find_element_by_id('group_list').text)
 
     def test_can_create_groups(self):
@@ -103,7 +103,7 @@ class NewVisitorTest(LiveServerTestCase):
         name_input = self.browser.find_element_by_id('id_shortname')
         name_input.send_keys("Scoobies")
         self.browser.find_element_by_id('edit_group_submit').click()
-        self.assertIn("Group Details", self.browser.title)
+        self.assertIn("Scoobies Group Details", self.browser.title)
 
         # She decides she wants to add additional information to the group, so
         # she clicks the "edit" button.
@@ -124,7 +124,7 @@ class NewVisitorTest(LiveServerTestCase):
         # contacts before she can add groups to them.
         self.browser.find_element_by_id('load_contact_manager').click()
         time.sleep(.5)
-        self.assertIn("You do not have any contacts.",
+        self.assertIn("You do not have any contacts to add.",
             self.browser.find_element_by_id('contact_list').text)
 
     def test_can_create_topics(self):
@@ -151,7 +151,7 @@ class NewVisitorTest(LiveServerTestCase):
         name_input = self.browser.find_element_by_id('id_shortname')
         name_input.send_keys("Selkies")
         self.browser.find_element_by_id('edit_topic_submit').click()
-        self.assertIn("Selkies Details", self.browser.title)
+        self.assertIn("Selkies Topic Details", self.browser.title)
 
         # She decides she wants to add additional information to the topic, so
         # she clicks the "edit" button.
@@ -200,7 +200,7 @@ class ReturningVisitorTest(LiveServerTestCase):
 
         # Giles' page shows no groups listed, so she clicks the button labeled
         # "Manage Groups"  She is shown a short list of groups.
-        self.assertIn("This contact has no groups listed.",
+        self.assertIn("You have not added any groups yet.",
             self.browser.find_element_by_id('group_list').text)
         self.browser.find_element_by_id('load_group_manager').click()
 
@@ -230,8 +230,7 @@ class ReturningVisitorTest(LiveServerTestCase):
 
         # Buffy closes the manage contacts form, and it disappears.
         self.browser.find_element_by_id('manage_contact_close').click()
-        self.assertEquals(False,
-            self.browser.find_element_by_id("inline_contact_div").is_displayed())
+        self.assertFalse(self.browser.find_element_by_id("inline_contact_div").is_displayed())
 
         # Buffy realizes that she doesn't want Snyder in the Scoobies group. She
         # selects "Manage Contacts" again.  She deselects Snyder and selects Giles,
@@ -241,6 +240,95 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_id('manage_contact_submit').click()
         with self.assertRaises(NoSuchElementException):
             self.browser.find_element_by_link_text('Snyder')
+
+    def test_can_link_topics_to_contacts_and_groups(self):
+        pass
+        # Buff now has groups and contacts.  She wants to add some topics to those
+        # groups and contacts.  She starts by going to her list of Contacts and
+        # selecting Giles.
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_contacts').click()
+        self.assertIn('contact/all', self.browser.current_url)
+        self.browser.find_element_by_link_text('Giles').click()
+
+        # Giles' page shows no topics listed, so she clicks the button labelled
+        # "Manage" next to "Topics".  She is shown a short list of topics.
+        self.assertIn("You have not added any topics yet.",
+            self.browser.find_element_by_id('topic_list').text)
+        self.browser.find_element_by_id('load_topic_manager').click()
+
+        # She selects the topic labelled "Apocalypse" and clicks submit.  The page
+        # now lists Giles as having an Apocalypse topic.
+        self.browser.find_element_by_id('id_topics_0').click()
+        self.browser.find_element_by_id('manage_topic_submit').click()
+        self.browser.find_element_by_link_text('Apocalypse')
+
+        # Buffy wonders if she can add topics to groups as well, so she navigates
+        # to the 'People' group and clicks on the button labelled "Manage" next to "Topics".
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_groups').click()
+        self.browser.find_element_by_link_text('People').click()
+        self.browser.find_element_by_id('load_topic_manager').click()
+
+        # Buffy selects the topic labelled "The Bronze" and clicks submit.  The page
+        # now lists the People group as having that topic.
+        self.browser.find_element_by_id('id_topics_1').click()
+        self.browser.find_element_by_id('manage_topic_submit').click()
+        self.browser.find_element_by_link_text('The Bronze')
+
+        # Buffy closes the manage topics form, and it disappears.
+        self.browser.find_element_by_id('manage_topic_close').click()
+        self.assertFalse(self.browser.find_element_by_id("inline_topic_div").is_displayed())
+
+        # Buffy wonders if she can add groups and contacts directly from the topics
+        # page.  She navigates to the 'Apocalypse' page and clicks "Manage Contacts".
+        # She sees a list of all of her contacts.
+        self.browser.find_element_by_id('topic_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_topics').click()
+        self.browser.find_element_by_link_text('Apocalypse').click()
+        self.browser.find_element_by_id('load_contact_manager').click()
+        self.assertEquals(4,
+            len(self.browser.find_elements_by_name('contacts')))
+
+        # Because of her previous actions, Giles is already associated with the topic.
+        self.assertTrue(self.browser.find_element_by_id('id_contacts_1').is_selected())
+
+        # # Buffy selects Cordelia and Spike and clicks submit.  The page
+        # now shows Giles, Cordelia and Spike as being tagged with this topic.
+        self.browser.find_element_by_id('id_contacts_2').click()
+        self.browser.find_element_by_id('id_contacts_3').click()
+        self.browser.find_element_by_id('manage_contact_submit').click()
+        self.browser.find_element_by_link_text('Giles')
+        self.browser.find_element_by_link_text('Spike')
+        self.browser.find_element_by_link_text('Cordelia')
+
+        # # Buffy realizes that she doesn't want Spike to know about the apocalypse,
+        # so she selects "Manage Contacts" again.  She deselects Spike and clicks submit.
+        # Now he is no longer listed.
+        self.browser.find_element_by_id('load_contact_manager').click()
+        self.browser.find_element_by_id('id_contacts_2').click()
+        self.browser.find_element_by_id('manage_contact_submit').click()
+        with self.assertRaises(NoSuchElementException):
+            self.browser.find_element_by_link_text('Spike')
+
+        # Next Buffy tries to add a group to the topic.  She closes the contact form
+        # and opens the group form.
+        self.browser.find_element_by_id('manage_contact_close').click()
+        self.assertFalse(self.browser.find_element_by_id("inline_contact_div").is_displayed())
+        self.browser.find_element_by_id('load_group_manager').click()
+        self.assertTrue(self.browser.find_element_by_id("inline_group_div").is_displayed())
+
+        # She selects the Scoobies group and clicks submit.  The page now shows the
+        # Scoobies group as having this tag.
+        self.browser.find_element_by_id('id_groups_1').click()
+        self.browser.find_element_by_id('manage_group_submit').click()
+        self.browser.find_element_by_link_text('Scoobies')
+
+        # She clicks on the link to the Scoobies group.  Under topics, "Apocalypse"
+        # is now listed.
+        self.browser.find_element_by_link_text('Scoobies').click()
+        self.browser.find_element_by_link_text('Apocalypse')
+
 
     # def test_can_view_lists_of_info(self):
 

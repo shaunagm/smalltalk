@@ -19,6 +19,11 @@ $( document ).ready(function() {
     $("#manage_contact_submit").click(function () {
         update_manager("Contact");
     });
+
+    $("#manage_topic_submit").click(function () {
+        update_manager("Topic");
+    });
+
 });
 
 function update_manager(object_type_to_adjust) {
@@ -33,6 +38,12 @@ function update_manager(object_type_to_adjust) {
         var read_element = "#id_contacts";
         var write_element = "#contact_list";
         var error_message = "There was an error updating contacts.";
+    };
+
+    if (object_type_to_adjust == "Topic") {
+        var read_element = "#id_topics";
+        var write_element = "#topic_list";
+        var error_message = "There was an error updating topics.";
     };
 
     var input_dict = [];

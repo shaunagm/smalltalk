@@ -17,6 +17,9 @@ class Contact(models.Model):
     def get_group_pks(self):
         return set([group.pk for group in self.group_set.all()])
 
+    def get_topic_pks(self):
+        return set([topic.pk for topic in self.topic_set.all()])
+
     def adjust_groups(self, pk_set):
         group_pks = self.get_group_pks()
         for pk in pk_set - group_pks:
@@ -26,6 +29,16 @@ class Contact(models.Model):
             group = Group.objects.get(pk=pk)
             self.group_set.remove(group)
         return self.group_set.all()
+
+    def adjust_topics(self, pk_set):
+        topic_pks = self.get_topic_pks()
+        for pk in pk_set - topic_pks:
+            topic = Topic.objects.get(pk=pk)
+            self.topic_set.add(topic)
+        for pk in topic_pks - pk_set:
+            topic = Topic.objects.get(pk=pk)
+            self.topic_set.remove(topic)
+        return self.topic_set.all()
 
 class Group(models.Model):
     shortname = models.CharField(max_length=100, unique=True)
@@ -44,6 +57,9 @@ class Group(models.Model):
     def get_contact_pks(self):
         return set([contact.pk for contact in self.contacts.all()])
 
+    def get_topic_pks(self):
+        return set([topic.pk for topic in self.topic_set.all()])
+
     def adjust_contacts(self, pk_set):
         contact_pks = self.get_contact_pks()
         for pk in pk_set - contact_pks:
@@ -53,6 +69,16 @@ class Group(models.Model):
             contact = Contact.objects.get(pk=pk)
             self.contacts.remove(contact)
         return self.contacts.all()
+
+    def adjust_topics(self, pk_set):
+        topic_pks = self.get_topic_pks()
+        for pk in pk_set - topic_pks:
+            topic = Topic.objects.get(pk=pk)
+            self.topic_set.add(topic)
+        for pk in topic_pks - pk_set:
+            topic = Topic.objects.get(pk=pk)
+            self.topic_set.remove(topic)
+        return self.topic_set.all()
 
 class Topic(models.Model):
     shortname = models.CharField(max_length=100, unique=True)

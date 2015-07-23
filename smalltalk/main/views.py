@@ -11,6 +11,8 @@ from .forms import ContactForm, GroupForm, TopicForm, ManageContactsForm, Manage
 from django.views.decorators.csrf import requires_csrf_token
 from django.shortcuts import render
 
+from .utils import group_form_helper, contact_form_helper, topic_form_helper
+
 ####################
 #### Meta Views ####
 ####################
@@ -43,13 +45,8 @@ class ContactDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ContactDetail, self).get_context_data(**kwargs)
-        if Group.objects.all():
-            context['manage_group_form'] = ManageGroupsForm(contact=self.object)
-            if not self.object.group_set.all():
-                context['no_groups_message'] = "This contact has no groups listed."
-        else:
-            context['no_groups_message'] = "You do not have any groups.  Why don't you" \
-                " try <a href='/group/new/'>adding some</a>?"
+        context.update(group_form_helper(self.object))
+        context.update(topic_form_helper(self.object))
         context['object_type'] = "Contact"
         return context
 
@@ -85,13 +82,8 @@ class GroupDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(GroupDetail, self).get_context_data(**kwargs)
-        if Contact.objects.all():
-            context['manage_contact_form'] = ManageContactsForm(group=self.object)
-            if not self.object.contacts.all():
-                context['no_contacts_message'] = "This group has no contacts listed."
-        else:
-            context['no_contacts_message'] = "You do not have any contacts.  Why don't you" \
-                " try <a href='/contact/new/'>creating some</a>?"
+        context.update(contact_form_helper(self.object))
+        context.update(topic_form_helper(self.object))
         context['object_type'] = "Group"
         return context
 
@@ -131,20 +123,8 @@ class TopicDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(TopicDetail, self).get_context_data(**kwargs)
-        if Contact.objects.all():
-            context['manage_contact_form'] = ManageContactsForm(group=self.object)
-            if not self.object.contacts.all():
-                context['no_contacts_message'] = "This topic has no contacts tagged."
-        else:
-            context['no_contacts_message'] = "You do not have any contacts.  Why don't you" \
-                " try <a href='/contact/new/'>creating some</a>?"
-        if Group.objects.all():
-            context['manage_group_form'] = ManageGroupsForm(contact=self.object)
-            if not self.object.group_set.all():
-                context['no_groups_message'] = "This topic has no groups tagged."
-        else:
-            context['no_groups_message'] = "You do not have any groups.  Why don't you" \
-                " try <a href='/group/new/'>adding some</a>?"
+        context.update(contact_form_helper(self.object))
+        context.update(group_form_helper(self.object))
         context['object_type'] = "Topic"
         return context
 
@@ -182,7 +162,7 @@ def update_manager(request):
             if object_type_to_adjust == "Group":
                 final_items = main_object.adjust_groups(selected_items)
             if object_type_to_adjust == "Topic":
-                final_items = []
+                final_items = main_object.adjust_topics(selected_items)
         if object_type == "Topic":
             main_object = Topic.objects.get(pk = int(object_pk))
             if object_type_to_adjust == "Contact":
@@ -194,7 +174,7 @@ def update_manager(request):
             if object_type_to_adjust == "Contact":
                 final_items = main_object.adjust_contacts(selected_items)
             if object_type_to_adjust == "Topic":
-                final_items = []
+                final_items = main_object.adjust_topics(selected_items)
         current_dict = [{'name': item.shortname, 'url': item.get_url()}
             for item in final_items]
         return JsonResponse({'status': 'Success', 'current_dict': current_dict})
