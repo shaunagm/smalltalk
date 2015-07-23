@@ -129,6 +129,24 @@ class TopicDetail(DetailView):
     model = Topic
     template_name = "topic.html"
 
+    def get_context_data(self, **kwargs):
+        context = super(TopicDetail, self).get_context_data(**kwargs)
+        if Contact.objects.all():
+            context['manage_contact_form'] = ManageContactsForm(group=self.object)
+            if not self.object.contacts.all():
+                context['no_contacts_message'] = "This topic has no contacts tagged."
+        else:
+            context['no_contacts_message'] = "You do not have any contacts.  Why don't you" \
+                " try <a href='/contact/new/'>creating some</a>?"
+        if Group.objects.all():
+            context['manage_group_form'] = ManageGroupsForm(contact=self.object)
+            if not self.object.group_set.all():
+                context['no_groups_message'] = "This topic has no groups tagged."
+        else:
+            context['no_groups_message'] = "You do not have any groups.  Why don't you" \
+                " try <a href='/group/new/'>adding some</a>?"
+        context['object_type'] = "Topic"
+        return context
 
 class TopicCreate(CreateView):
     form_class = TopicForm
@@ -154,16 +172,29 @@ def update_manager(request):
     posted_form = request.POST.get('manage_form', None)
     object_type = request.POST.get('object_type', None)
     object_pk = request.POST.get('object_pk', None)
-    if posted_form and object_type and object_pk:
+    object_type_to_adjust =  request.POST.get('object_type_to_adjust', None)
+    if posted_form and object_type and object_pk and object_type_to_adjust:
         form_data = json.loads(posted_form)
         selected_items = set([int(item['pk']) for item in form_data
             if item['checked'] == True])
         if object_type == "Contact":
             main_object = Contact.objects.get(pk = int(object_pk))
-            final_items = main_object.adjust_groups(selected_items)
+            if object_type_to_adjust == "Group":
+                final_items = main_object.adjust_groups(selected_items)
+            if object_type_to_adjust == "Topic":
+                final_items = []
+        if object_type == "Topic":
+            main_object = Topic.objects.get(pk = int(object_pk))
+            if object_type_to_adjust == "Contact":
+                final_items = main_object.adjust_contacts(selected_items)
+            if object_type_to_adjust == "Group":
+                final_items = main_object.adjust_groups(selected_items)
         if object_type == "Group":
             main_object = Group.objects.get(pk = int(object_pk))
-            final_items = main_object.adjust_contacts(selected_items)
+            if object_type_to_adjust == "Contact":
+                final_items = main_object.adjust_contacts(selected_items)
+            if object_type_to_adjust == "Topic":
+                final_items = []
         current_dict = [{'name': item.shortname, 'url': item.get_url()}
             for item in final_items]
         return JsonResponse({'status': 'Success', 'current_dict': current_dict})

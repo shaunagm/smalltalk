@@ -8,4 +8,8 @@
 
     <h2><a id="topic_edit" href="{% url 'topic_edit' object.pk %}">Edit</a></h2>
 
+    {% include 'contact_inline.html' %}
+
+    {% include 'group_inline.html' %}
+
 {% endblock inner-content %}

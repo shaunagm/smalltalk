@@ -12,25 +12,27 @@ $( document ).ready(function() {
 
     $("#new_group_submit").click(new_group_submit);
 
-    $("#manage_group_submit").click(update_manager);
+    $("#manage_group_submit").click(function() {
+        update_manager("Group");
+    });
 
-    $("#manage_contact_submit").click(update_manager);
+    $("#manage_contact_submit").click(function () {
+        update_manager("Contact");
+    });
 });
 
-function update_manager() {
+function update_manager(object_type_to_adjust) {
 
-    var object_type = $("#object-details").attr("object-type");
-
-    if (object_type == "Group") {
-        var read_element = "#id_contacts";
-        var write_element = "#contact_list";
-        var error_message = "There was an error updating this group's contacts.";
-    };
-
-    if (object_type == "Contact") {
+    if (object_type_to_adjust == "Group") {
         var read_element = "#id_groups";
         var write_element = "#group_list";
-        var error_message = "There was an error updating this contact's groups";
+        var error_message = "There was an error updating groups";
+    };
+
+    if (object_type_to_adjust == "Contact") {
+        var read_element = "#id_contacts";
+        var write_element = "#contact_list";
+        var error_message = "There was an error updating contacts.";
     };
 
     var input_dict = [];
@@ -42,7 +44,8 @@ function update_manager() {
         url: '/update_manager',
         type: 'POST',
         data: {'manage_form': JSON.stringify(input_dict),
-        'object_type': object_type,
+        'object_type_to_adjust': object_type_to_adjust,
+        'object_type': $("#object-details").attr("object-type"),
         'object_pk': $("#object-details").attr("object-pk")},
         dataType: 'json',
         beforeSend: function(xhr, settings) {
