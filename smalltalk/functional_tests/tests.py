@@ -216,7 +216,7 @@ class ReturningVisitorTest(LiveServerTestCase):
         # a list of all of her contacts.
         self.browser.find_element_by_link_text('Scoobies').click()
         self.browser.find_element_by_id('load_contact_manager').click()
-        self.assertEquals(4,
+        self.assertEquals(6,
             len(self.browser.find_elements_by_name('contacts')))
 
         # Buffy selects Snyder and Cordelia and clicks submit.  The page now shows
@@ -242,7 +242,6 @@ class ReturningVisitorTest(LiveServerTestCase):
             self.browser.find_element_by_link_text('Snyder')
 
     def test_can_link_topics_to_contacts_and_groups(self):
-        pass
         # Buff now has groups and contacts.  She wants to add some topics to those
         # groups and contacts.  She starts by going to her list of Contacts and
         # selecting Giles.
@@ -287,7 +286,7 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_id('nav_show_topics').click()
         self.browser.find_element_by_link_text('Apocalypse').click()
         self.browser.find_element_by_id('load_contact_manager').click()
-        self.assertEquals(4,
+        self.assertEquals(6,
             len(self.browser.find_elements_by_name('contacts')))
 
         # Because of her previous actions, Giles is already associated with the topic.
@@ -328,6 +327,41 @@ class ReturningVisitorTest(LiveServerTestCase):
         # is now listed.
         self.browser.find_element_by_link_text('Scoobies').click()
         self.browser.find_element_by_link_text('Apocalypse')
+
+    # def test_can_add_topic_to_multiple_contacts_via_adding_to_group(self):
+    #     # Buffy wants to be able to add a topic via the Scoobies tag but have it
+    #     # show up on individual people's pages.  She starts by going to the Scoobies
+    #     # group page and adding a topic.
+    #     self.browser.find_element_by_id('contact_dropdown_toggle').click()
+    #     self.browser.find_element_by_id('nav_show_groups').click()
+    #     self.browser.find_element_by_link_text('Scoobies').click()
+    #     self.browser.find_element_by_id('load_topic_manager').click()
+    #     self.browser.find_element_by_id('id_topics_0').click()
+    #     self.browser.find_element_by_id('manage_topic_submit').click()
+    #     self.browser.find_element_by_link_text('Apocalypse')
+    #
+    #     # Next she checks the page for her friend Xander.  He does not have any
+    #     # topics listed.
+    #     self.browser.find_element_by_id('contact_dropdown_toggle').click()
+    #     self.browser.find_element_by_id('nav_show_contacts').click()
+    #     self.browser.find_element_by_link_text('Xander Harris').click()
+    #     with self.assertRaises(NoSuchElementException):
+    #         self.browser.find_element_by_link_text('Apocalypse')
+    #
+    #     # She returns to the Scoobies page and adds Xander to the group.
+    #     self.browser.find_element_by_id('contact_dropdown_toggle').click()
+    #     self.browser.find_element_by_id('nav_show_groups').click()
+    #     self.browser.find_element_by_link_text('Scoobies').click()
+    #     self.browser.find_element_by_id('load_contact_manager').click()
+    #     self.browser.find_element_by_id('id_contacts_5').click()
+    #     self.browser.find_element_by_id('manage_contact_submit').click()
+    #     self.browser.find_element_by_link_text('Xander Harris')
+    #
+    #     # When she checks Xander's page again, a link to the topic shows up.
+    #     self.browser.find_element_by_id('contact_dropdown_toggle').click()
+    #     self.browser.find_element_by_id('nav_show_contacts').click()
+    #     self.browser.find_element_by_link_text('Xander Harris').click()
+    #     self.browser.find_element_by_link_text('Apocalypse')
 
 
     # def test_can_view_lists_of_info(self):

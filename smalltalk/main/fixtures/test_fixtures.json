@@ -1,83 +1,95 @@
 [
 {
+    "model": "main.contact",
     "fields": {
         "details": "WOOOOSAD",
         "shortname": "Snyder"
     },
-    "model": "main.contact",
     "pk": 2
 },
 {
+    "model": "main.contact",
     "fields": {
         "details": "Watcher!??",
         "shortname": "Giles"
     },
-    "model": "main.contact",
     "pk": 3
 },
 {
+    "model": "main.contact",
     "fields": {
         "details": "\"The truth is, I like this world. You've got... dog racing, Manchester United, and you've got people. Billions of people walking around like Happy Meals with legs.\"",
         "shortname": "Spike"
     },
-    "model": "main.contact",
     "pk": 4
 },
 {
+    "model": "main.contact",
     "fields": {
         "details": "\"Tact is just not saying true stuff. I'll pass.\"",
         "shortname": "Cordelia"
     },
+    "pk": 5
+},
+{
     "model": "main.contact",
-    "pk": 5
-},
-{
     "fields": {
-        "details": "People who need people are the luckiest people in the world.",
-        "shortname": "People",
-        "contacts": []
+        "details": "Hacker, witch, and bff",
+        "shortname": "Willow Rosenberg"
     },
-    "model": "main.group",
-    "pk": 4
-},
-{
-    "fields": {
-        "details": "They fight evil!",
-        "shortname": "Scoobies",
-        "contacts": []
-    },
-    "model": "main.group",
-    "pk": 5
-},
-{
-    "fields": {
-        "details": "People who eat people are the worst kind of people in the world.",
-        "shortname": "Vampires",
-        "contacts": []
-    },
-    "model": "main.group",
     "pk": 6
 },
 {
+    "model": "main.contact",
     "fields": {
-        "details": "Now?  Later?",
-        "shortname": "Apocalypse",
-        "link": "",
-        "contacts": [],
-        "group_set": []
+        "details": "Comfortador.",
+        "shortname": "Xander Harris"
     },
+    "pk": 7
+},
+{
+    "model": "main.group",
+    "fields": {
+        "details": "People who need people are the luckiest people in the world.",
+        "contacts": [],
+        "shortname": "People"
+    },
+    "pk": 4
+},
+{
+    "model": "main.group",
+    "fields": {
+        "details": "They fight evil!",
+        "contacts": [],
+        "shortname": "Scoobies"
+    },
+    "pk": 5
+},
+{
+    "model": "main.group",
+    "fields": {
+        "details": "People who eat people are the worst kind of people in the world.",
+        "contacts": [],
+        "shortname": "Vampires"
+    },
+    "pk": 6
+},
+{
     "model": "main.topic",
+    "fields": {
+        "details": "If it comes, beep me.",
+        "link": "",
+        "shortname": "Apocalypse"
+    },
     "pk": 1
 },
 {
-    "fields": {
-        "details": "Let's go tonight!",
-        "shortname": "The Bronze",
-        "link": "",
-        "contacts": [],
-        "group_set": []
-    },
     "model": "main.topic",
+    "fields": {
+        "details": "It's in the bad part of town... about half a block from the good part of town. ",
+        "link": "",
+        "shortname": "The Bronze"
+    },
     "pk": 2
 }
 ]
