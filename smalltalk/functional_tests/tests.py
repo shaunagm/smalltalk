@@ -183,7 +183,7 @@ class ReturningVisitorTest(LiveServerTestCase):
     def setUp(self):
         # Buffy is returning to the website she found and added data to earlier.
         self.browser = webdriver.Firefox()
-        self.browser.implicitly_wait(3)
+        self.browser.implicitly_wait(1)
         self.browser.get('%s' % (self.live_server_url))
 
     def tearDown(self):
@@ -328,41 +328,133 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_link_text('Scoobies').click()
         self.browser.find_element_by_link_text('Apocalypse')
 
-    # def test_can_add_topic_to_multiple_contacts_via_adding_to_group(self):
-    #     # Buffy wants to be able to add a topic via the Scoobies tag but have it
-    #     # show up on individual people's pages.  She starts by going to the Scoobies
-    #     # group page and adding a topic.
-    #     self.browser.find_element_by_id('contact_dropdown_toggle').click()
-    #     self.browser.find_element_by_id('nav_show_groups').click()
-    #     self.browser.find_element_by_link_text('Scoobies').click()
-    #     self.browser.find_element_by_id('load_topic_manager').click()
-    #     self.browser.find_element_by_id('id_topics_0').click()
-    #     self.browser.find_element_by_id('manage_topic_submit').click()
-    #     self.browser.find_element_by_link_text('Apocalypse')
-    #
-    #     # Next she checks the page for her friend Xander.  He does not have any
-    #     # topics listed.
-    #     self.browser.find_element_by_id('contact_dropdown_toggle').click()
-    #     self.browser.find_element_by_id('nav_show_contacts').click()
-    #     self.browser.find_element_by_link_text('Xander Harris').click()
-    #     with self.assertRaises(NoSuchElementException):
-    #         self.browser.find_element_by_link_text('Apocalypse')
-    #
-    #     # She returns to the Scoobies page and adds Xander to the group.
-    #     self.browser.find_element_by_id('contact_dropdown_toggle').click()
-    #     self.browser.find_element_by_id('nav_show_groups').click()
-    #     self.browser.find_element_by_link_text('Scoobies').click()
-    #     self.browser.find_element_by_id('load_contact_manager').click()
-    #     self.browser.find_element_by_id('id_contacts_5').click()
-    #     self.browser.find_element_by_id('manage_contact_submit').click()
-    #     self.browser.find_element_by_link_text('Xander Harris')
-    #
-    #     # When she checks Xander's page again, a link to the topic shows up.
-    #     self.browser.find_element_by_id('contact_dropdown_toggle').click()
-    #     self.browser.find_element_by_id('nav_show_contacts').click()
-    #     self.browser.find_element_by_link_text('Xander Harris').click()
-    #     self.browser.find_element_by_link_text('Apocalypse')
+    def test_can_add_and_remove_topics_from_contacts_via_group(self):
+        # Buffy wants to be able to add a topic via the Scoobies tag but have it
+        # show up on individual people's pages.  She starts by checking that Xander
+        # does not have any topics listed on his contact page.
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_contacts').click()
+        self.browser.find_element_by_link_text('Xander Harris').click()
+        with self.assertRaises(NoSuchElementException):
+            self.browser.find_element_by_link_text('Apocalypse')
 
+        #She then adds Xander to the Scoobies group.
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_groups').click()
+        self.browser.find_element_by_link_text('Scoobies').click()
+        self.browser.find_element_by_id('load_contact_manager').click()
+        self.browser.find_element_by_id('id_contacts_5').click()
+        self.browser.find_element_by_id('manage_contact_submit').click()
+        self.browser.find_element_by_link_text('Xander Harris')
+
+        # Then she adds a topic to the group.
+        self.browser.find_element_by_id('load_topic_manager').click()
+        self.browser.find_element_by_id('id_topics_0').click()
+        self.browser.find_element_by_id('manage_topic_submit').click()
+        self.browser.find_element_by_link_text('Apocalypse')
+
+        # When she checks Xander's page again, a link to the topic shows up.
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_contacts').click()
+        self.browser.find_element_by_link_text('Xander Harris').click()
+        self.browser.find_element_by_link_text('Apocalypse')
+
+        # Next she tries removing the topic from the group.
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_groups').click()
+        self.browser.find_element_by_link_text('Scoobies').click()
+        self.browser.find_element_by_id('load_topic_manager').click()
+        self.browser.find_element_by_id('id_topics_0').click()
+        self.browser.find_element_by_id('manage_topic_submit').click()
+        with self.assertRaises(NoSuchElementException):
+            self.browser.find_element_by_link_text('Apocalypse')
+
+        # When she checks Xander's page, the topic is gone again.
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_contacts').click()
+        self.browser.find_element_by_link_text('Xander Harris').click()
+        with self.assertRaises(NoSuchElementException):
+            self.browser.find_element_by_link_text('Apocalypse')
+
+        # She wonders if removing a topic from the group will override finer-grained
+        # changes.  She navigates to Willow's page and adds a topic there.
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_contacts').click()
+        self.browser.find_element_by_link_text('Willow Rosenberg').click()
+        self.browser.find_element_by_id('load_topic_manager').click()
+        self.browser.find_element_by_id('id_topics_1').click()
+        self.browser.find_element_by_id('manage_topic_submit').click()
+        self.browser.find_element_by_link_text('The Bronze')
+
+        # Then she goes to the Scoobies page, where she adds and then removes the
+        # topic.
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_groups').click()
+        self.browser.find_element_by_link_text('Scoobies').click()
+        self.browser.find_element_by_id('load_topic_manager').click()
+        self.browser.find_element_by_id('id_topics_1').click()
+        self.browser.find_element_by_id('manage_topic_submit').click()
+        self.browser.find_element_by_link_text('The Bronze')
+        self.browser.find_element_by_id('load_topic_manager').click()
+        self.browser.find_element_by_id('id_topics_1').click()
+        self.browser.find_element_by_id('manage_topic_submit').click()
+        with self.assertRaises(NoSuchElementException):
+            self.browser.find_element_by_link_text('The Bronze')
+
+        # When she goes back to Willow's page, the topic is still there.
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_contacts').click()
+        self.browser.find_element_by_link_text('Willow Rosenberg').click()
+        self.browser.find_element_by_link_text('The Bronze')
+
+        # What about adding a contact to a group, Buffy wonders.  Will that add
+        # to the contact all the topics already linked to the group?  She starts by
+        # adding a topic to the Scoobies group.
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_groups').click()
+        self.browser.find_element_by_link_text('Scoobies').click()
+        self.browser.find_element_by_id('load_topic_manager').click()
+        self.browser.find_element_by_id('id_topics_2').click()
+        self.browser.find_element_by_id('manage_topic_submit').click()
+        self.browser.find_element_by_link_text('Stakes')
+
+        # She decides to try this out with Giles.  First, she checks that Giles does
+        # not already have "Stakes" as a topic.
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_contacts').click()
+        self.browser.find_element_by_link_text('Giles').click()
+        with self.assertRaises(NoSuchElementException):
+            self.browser.find_element_by_link_text('Stakes')
+
+        # Then, she adds him to the Scoobies group.
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_groups').click()
+        self.browser.find_element_by_link_text('Scoobies').click()
+        self.browser.find_element_by_id('load_contact_manager').click()
+        self.browser.find_element_by_id('id_contacts_1').click()
+        self.browser.find_element_by_id('manage_contact_submit').click()
+        self.browser.find_element_by_link_text('Giles')
+
+        # When she checks Giles' page, it lists both the Scoobies group *and*
+        # the Stakes topic.
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_contacts').click()
+        self.browser.find_element_by_link_text('Giles').click()
+        self.browser.find_element_by_link_text('Scoobies')
+        self.browser.find_element_by_link_text('Stakes')
+
+        # When she removes him from the group, the topic "Stakes" is gone again.
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_groups').click()
+        self.browser.find_element_by_link_text('Scoobies').click()
+        self.browser.find_element_by_id('load_contact_manager').click()
+        self.browser.find_element_by_id('id_contacts_1').click()
+        self.browser.find_element_by_id('manage_contact_submit').click()
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_contacts').click()
+        self.browser.find_element_by_link_text('Giles').click()
+        with self.assertRaises(NoSuchElementException):
+            self.browser.find_element_by_link_text('Stakes')
 
     # def test_can_view_lists_of_info(self):
 

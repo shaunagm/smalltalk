@@ -91,5 +91,14 @@
         "shortname": "The Bronze"
     },
     "pk": 2
+},
+{
+    "model": "main.topic",
+    "fields": {
+        "details": "The stakes are high! And pointy.",
+        "link": "",
+        "shortname": "Stakes"
+    },
+    "pk": 3
 }
 ]

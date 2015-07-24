@@ -69,9 +69,11 @@ class Group(models.Model):
         for pk in pk_set - contact_pks:
             contact = Contact.objects.get(pk=pk)
             self.contacts.add(contact)
+            self.manage_contacts_via_group(contact=contact, adjust_type="AddGivenContact")
         for pk in contact_pks - pk_set:
             contact = Contact.objects.get(pk=pk)
             self.contacts.remove(contact)
+            self.manage_contacts_via_group(contact=contact, adjust_type="RemoveGivenContact")
         return self.contacts.all()
 
     def adjust_topics(self, pk_set):
@@ -80,11 +82,47 @@ class Group(models.Model):
             topic = Topic.objects.get(pk=pk)
             relationship = TopicGroupRelationship(group=self, topic=topic)
             relationship.save()
+            self.manage_contacts_via_group(topic=topic, adjust_type="AddGivenTopic")
         for pk in topic_pks - pk_set:
             topic = Topic.objects.get(pk=pk)
             relationship = TopicGroupRelationship.objects.get(group=self, topic=topic)
             relationship.delete()
+            self.manage_contacts_via_group(topic=topic, adjust_type="RemoveGivenTopic")
         return self.topic_set.all()
+
+    def manage_contacts_via_group(self, adjust_type, topic=[], contact=[], override=False):
+        if adjust_type == "AddGivenTopic":
+            for contact in self.contacts.all():
+                self.add_topic_to_contact(topic, contact)
+        if adjust_type == "RemoveGivenTopic":
+            for contact in self.contacts.all():
+                self.remove_topic_from_contact(topic, contact, override)
+        if adjust_type == "AddGivenContact":
+            for topic in self.topic_set.all():
+                self.add_topic_to_contact(topic, contact)
+        if adjust_type == "RemoveGivenContact":
+            for topic in self.topic_set.all():
+                self.remove_topic_from_contact(topic, contact, override)
+
+    def add_topic_to_contact(self, topic, contact):
+        relationship_set = TopicContactRelationship.objects.filter(contact=contact,
+            topic=topic)
+        if not relationship_set:
+            relationship = TopicContactRelationship(contact=contact,
+                topic=topic, via_group=1, via_group_name=self)
+            relationship.save()
+
+    def remove_topic_from_contact(self, topic, contact, override=False):
+        relationship_set = TopicContactRelationship.objects.filter(
+            contact=contact, topic=topic)
+        if relationship_set:
+            '''Only deletes relationship if previously made via this group
+            or if an override flag has been passed.'''
+            rel = relationship_set[0]
+            if rel.via_group and (rel.via_group_name == self):
+                rel.delete()
+            elif override:
+                rel.delete()
 
 class Topic(models.Model):
     shortname = models.CharField(max_length=100, unique=True)
