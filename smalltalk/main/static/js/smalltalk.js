@@ -1,5 +1,34 @@
 $( document ).ready(function() {
 
+    // Datatable (for list objects)
+    var oTable = $('#object_list_table').dataTable({
+        "paging":   false,
+        "info":     false,
+        "aoColumnDefs": [
+            { 'bVisible': false, 'aTargets': [1,2,3,4] }
+        ]
+    });
+
+    $('#list_table_alpha').click(function(){
+        oTable.fnSort([  [0,'asc']] );
+    });
+
+    $('#list_table_recent').click(function(){
+        oTable.fnSort([  [1,'asc']] );
+    });
+
+    $('#list_table_contacts').click(function(){
+        oTable.fnSort([  [2,'desc']] );
+    });
+
+    $('#list_table_groups').click(function(){
+        oTable.fnSort([  [3,'desc']] );
+    });
+
+    $('#list_table_topics').click(function(){
+        oTable.fnSort([  [4,'desc']] );
+    });
+
     $("#new_contact_button").click(function(e) {
         $("#contact_form_container").show();
     });

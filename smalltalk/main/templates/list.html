@@ -2,7 +2,7 @@
 
 {% block title %}
 
-    Show All {{ object.object_type }}
+    Show All {{ object_type }}
 
 {% endblock title %}
 
@@ -11,11 +11,62 @@
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
 
-            {% for object in object_list %}
+            {% if object_list %}
 
-                <a href="{{ object.get_url }}">{{ object.name }}</a> {{ object.details }}
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default" id="list_table_alpha">Alphabetical</button>
+                    <button type="button" class="btn btn-default" id="list_table_recent">Most Recently Updated</button>
 
-            {% endfor %}
+                    {% ifnotequal object_type "Topics" %}
+                        <button type="button" class="btn btn-default" id="list_table_topics">
+                            Most Topics Tagged</button>
+                    {% endifnotequal %}
+
+                    {% ifnotequal object_type "Contacts" %}
+                        <button type="button" class="btn btn-default" id="list_table_contacts">
+                            Most Linked Contacts</button>
+                    {% endifnotequal %}
+
+                    {% ifnotequal object_type "Groups" %}
+                        <button type="button" class="btn btn-default" id="list_table_groups">
+                            Most Linked Groups</button>
+                    {% endifnotequal %}
+
+                </div>
+
+                <table id="object_list_table" class="display" cellspacing="0" width="100%">
+                    <tbody>
+
+                        {% for object in object_list %}
+
+                        <tr>
+                            <td class="list-object">
+                                <a href="{{ object.get_url }}">{{ object.name }}</a>
+                                <a href="#item{{ object.pk }}" data-toggle="collapse">
+                                    <span class="glyphicon glyphicon-arrow-down"></span>
+                                </a>
+                                <div id="item{{ object.pk }}" class="collapse">
+                                    {{ object.details }}
+                                </div>
+                            </td>
+                            <td>{{ object.pk }}</td>
+                            <td>{{ object.contacts.count }}</td>
+                            <td>{{ object.group_set.count }}</td>
+                            <td>{{ object.topic_set.count }}</td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+
+            {% else %}
+
+                <div>You do not have any {{ object.object_type }} to add.  Why don't
+                    you <a href='/{{ object.object_type }}/new/'>add some</a>?</div>
+
+            {% endif %}
+
 
         </div>
     </div>
