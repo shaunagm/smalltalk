@@ -14,7 +14,7 @@ $( document ).ready(function() {
     });
 
     $('#list_table_recent').click(function(){
-        oTable.fnSort([  [1,'asc']] );
+        oTable.fnSort([  [1,'desc']] );
     });
 
     $('#list_table_contacts').click(function(){

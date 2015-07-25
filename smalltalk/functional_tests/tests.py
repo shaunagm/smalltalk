@@ -205,7 +205,7 @@ class ReturningVisitorTest(LiveServerTestCase):
 
         # She selects the group labelled "Scoobies" and clicks submit.  The page
         # now lists Giles as being in the "Scoobies" group.
-        self.browser.find_element_by_id('id_groups_1').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'Scoobies')]/input").click()
         self.browser.find_element_by_id('manage_group_submit').click()
         time.sleep(.5)
         self.browser.find_element_by_link_text('Scoobies')
@@ -215,13 +215,13 @@ class ReturningVisitorTest(LiveServerTestCase):
         # a list of all of her contacts.
         self.browser.find_element_by_link_text('Scoobies').click()
         self.browser.find_element_by_id('load_contact_manager').click()
-        self.assertEquals(6,
+        self.assertEquals(8,
             len(self.browser.find_elements_by_name('contacts')))
 
         # Buffy selects Snyder and Cordelia and clicks submit.  The page now shows
         # Snyder, Giles, and Cordelia as part of the Scoobies.
-        self.browser.find_element_by_id('id_contacts_0').click()
-        self.browser.find_element_by_id('id_contacts_2').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'Snyder')]/input").click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'Cordelia')]/input").click()
         self.browser.find_element_by_id('manage_contact_submit').click()
         self.browser.find_element_by_link_text('Snyder')
         self.browser.find_element_by_link_text('Giles')
@@ -234,7 +234,7 @@ class ReturningVisitorTest(LiveServerTestCase):
         # Buffy realizes that she doesn't want Snyder in the Scoobies group. She
         # selects "Manage Contacts" again.  She deselects Snyder and clicks submit.
         self.browser.find_element_by_id('load_contact_manager').click()
-        self.browser.find_element_by_id('id_contacts_2').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'Snyder')]/input").click()
         self.browser.find_element_by_id('manage_contact_submit').click()
         with self.assertRaises(NoSuchElementException):
             self.browser.find_element_by_link_text('Snyder')
@@ -256,7 +256,7 @@ class ReturningVisitorTest(LiveServerTestCase):
 
         # She selects the topic labelled "Apocalypse" and clicks submit.  The page
         # now lists Giles as having an Apocalypse topic.
-        self.browser.find_element_by_id('id_topics_0').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'Apocalypse')]/input").click()
         self.browser.find_element_by_id('manage_topic_submit').click()
         self.browser.find_element_by_link_text('Apocalypse')
 
@@ -269,7 +269,7 @@ class ReturningVisitorTest(LiveServerTestCase):
 
         # Buffy selects the topic labelled "The Bronze" and clicks submit.  The page
         # now lists the People group as having that topic.
-        self.browser.find_element_by_id('id_topics_1').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'The Bronze')]/input").click()
         self.browser.find_element_by_id('manage_topic_submit').click()
         self.browser.find_element_by_link_text('The Bronze')
 
@@ -284,7 +284,7 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_id('nav_show_topics').click()
         self.browser.find_element_by_link_text('Apocalypse').click()
         self.browser.find_element_by_id('load_contact_manager').click()
-        self.assertEquals(6,
+        self.assertEquals(8,
             len(self.browser.find_elements_by_name('contacts')))
 
         # Because of her previous actions, Giles is already associated with the topic.
@@ -292,8 +292,8 @@ class ReturningVisitorTest(LiveServerTestCase):
 
         # # Buffy selects Cordelia and Spike and clicks submit.  The page
         # now shows Giles, Cordelia and Spike as being tagged with this topic.
-        self.browser.find_element_by_id('id_contacts_0').click()
-        self.browser.find_element_by_id('id_contacts_3').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'Cordelia')]/input").click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'Spike')]/input").click()
         self.browser.find_element_by_id('manage_contact_submit').click()
         self.browser.find_element_by_link_text('Giles')
         self.browser.find_element_by_link_text('Spike')
@@ -303,7 +303,7 @@ class ReturningVisitorTest(LiveServerTestCase):
         # so she selects "Manage Contacts" again.  She deselects Spike and clicks submit.
         # Now he is no longer listed.
         self.browser.find_element_by_id('load_contact_manager').click()
-        self.browser.find_element_by_id('id_contacts_3').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'Spike')]/input").click()
         self.browser.find_element_by_id('manage_contact_submit').click()
         with self.assertRaises(NoSuchElementException):
             self.browser.find_element_by_link_text('Spike')
@@ -317,7 +317,7 @@ class ReturningVisitorTest(LiveServerTestCase):
 
         # She selects the Scoobies group and clicks submit.  The page now shows the
         # Scoobies group as having this tag.
-        self.browser.find_element_by_id('id_groups_1').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'Scoobies')]/input").click()
         self.browser.find_element_by_id('manage_group_submit').click()
         self.browser.find_element_by_link_text('Scoobies')
 
@@ -341,13 +341,13 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_id('nav_show_groups').click()
         self.browser.find_element_by_link_text('Scoobies').click()
         self.browser.find_element_by_id('load_contact_manager').click()
-        self.browser.find_element_by_id('id_contacts_5').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'Xander Harris')]/input").click()
         self.browser.find_element_by_id('manage_contact_submit').click()
         self.browser.find_element_by_link_text('Xander Harris')
 
         # Then she adds a topic to the group.
         self.browser.find_element_by_id('load_topic_manager').click()
-        self.browser.find_element_by_id('id_topics_0').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'Apocalypse')]/input").click()
         self.browser.find_element_by_id('manage_topic_submit').click()
         self.browser.find_element_by_link_text('Apocalypse')
 
@@ -362,8 +362,9 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_id('nav_show_groups').click()
         self.browser.find_element_by_link_text('Scoobies').click()
         self.browser.find_element_by_id('load_topic_manager').click()
-        self.browser.find_element_by_id('id_topics_0').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'Apocalypse')]/input").click()
         self.browser.find_element_by_id('manage_topic_submit').click()
+        time.sleep(.5)
         with self.assertRaises(NoSuchElementException):
             self.browser.find_element_by_link_text('Apocalypse')
 
@@ -380,7 +381,7 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_id('nav_show_contacts').click()
         self.browser.find_element_by_link_text('Willow Rosenberg').click()
         self.browser.find_element_by_id('load_topic_manager').click()
-        self.browser.find_element_by_id('id_topics_1').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'The Bronze')]/input").click()
         self.browser.find_element_by_id('manage_topic_submit').click()
         self.browser.find_element_by_link_text('The Bronze')
 
@@ -390,11 +391,11 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_id('nav_show_groups').click()
         self.browser.find_element_by_link_text('Scoobies').click()
         self.browser.find_element_by_id('load_topic_manager').click()
-        self.browser.find_element_by_id('id_topics_1').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'The Bronze')]/input").click()
         self.browser.find_element_by_id('manage_topic_submit').click()
         self.browser.find_element_by_link_text('The Bronze')
         self.browser.find_element_by_id('load_topic_manager').click()
-        self.browser.find_element_by_id('id_topics_1').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'The Bronze')]/input").click()
         self.browser.find_element_by_id('manage_topic_submit').click()
         with self.assertRaises(NoSuchElementException):
             self.browser.find_element_by_link_text('The Bronze')
@@ -412,7 +413,7 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_id('nav_show_groups').click()
         self.browser.find_element_by_link_text('Scoobies').click()
         self.browser.find_element_by_id('load_topic_manager').click()
-        self.browser.find_element_by_id('id_topics_2').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'Stakes')]/input").click()
         self.browser.find_element_by_id('manage_topic_submit').click()
         self.browser.find_element_by_link_text('Stakes')
 
@@ -429,7 +430,7 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_id('nav_show_groups').click()
         self.browser.find_element_by_link_text('Scoobies').click()
         self.browser.find_element_by_id('load_contact_manager').click()
-        self.browser.find_element_by_id('id_contacts_1').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'Giles')]/input").click()
         self.browser.find_element_by_id('manage_contact_submit').click()
         self.browser.find_element_by_link_text('Giles')
 
@@ -446,7 +447,7 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_id('nav_show_groups').click()
         self.browser.find_element_by_link_text('Scoobies').click()
         self.browser.find_element_by_id('load_contact_manager').click()
-        self.browser.find_element_by_id('id_contacts_1').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'Giles')]/input").click()
         self.browser.find_element_by_id('manage_contact_submit').click()
         self.browser.find_element_by_id('contact_dropdown_toggle').click()
         self.browser.find_element_by_id('nav_show_contacts').click()
@@ -460,10 +461,10 @@ class ReturningVisitorTest(LiveServerTestCase):
         # with multiple contacts listed.
         self.browser.find_element_by_id('contact_dropdown_toggle').click()
         self.browser.find_element_by_id('nav_show_contacts').click()
-        self.assertEquals(6,
+        self.assertEquals(8,
             len(self.browser.find_elements_by_class_name('list-object')))
 
-        # When she selects the first one, it takes her to a detail page for that contact.
+        # When she selects on one of them, it takes her to a detail page for that contact.
         self.browser.find_element_by_link_text('Snyder').click()
         self.assertIn("Snyder Contact Details", self.browser.title)
         self.browser.back()
@@ -473,25 +474,71 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.assertIn("Cordelia",
             self.browser.find_elements_by_class_name('list-object')[0].text)
         self.assertIn("Xander Harris",
-            self.browser.find_elements_by_class_name('list-object')[5].text)
+            self.browser.find_elements_by_class_name('list-object')[7].text)
 
+        # She sees buttons that allow her to sort by recency.  When she clicks it,
+        # the contacts are resorted so the most recent contact she added, Xander, is
+        # at the top.
+        self.browser.find_element_by_id('list_table_recent').click()
+        self.assertIn("Faith",
+            self.browser.find_elements_by_class_name('list-object')[0].text)
 
-        # Next, Buffy clicks on the "show all contacts" options.  She sees a list of contacts.
+        # When she clicks the button for "most topics tagged", the person at the top is
+        # Faith, who she has tagged with 3 topics.
+        self.browser.find_element_by_id('list_table_topics').click()
+        self.assertIn("Faith",
+            self.browser.find_elements_by_class_name('list-object')[0].text)
 
-        # When she selects the first one, it takes her to a detail page.
+        # Finally, when she clicks the button for "most linked groups", Oz, who she has
+        # put in two groups, is at the top.
+        self.browser.find_element_by_id('list_table_groups').click()
+        self.assertIn("Oz",
+            self.browser.find_elements_by_class_name('list-object')[0].text)
 
-        # Buffy returns to the main list view.  She sees that it is sorted by recency
-        # by default.
+        # Next Buffy notices a search box.  She starts to type in Willow's name, and
+        # after only 3 letters, Willow is the only name that shows up.
+        search_input = self.browser.find_element_by_tag_name('input')
+        search_input.send_keys("Wil")
+        visible_contacts = [contact for contact in
+            self.browser.find_elements_by_class_name('list-object') if contact.is_displayed()]
+        self.assertEquals(1, len(visible_contacts))
+        self.browser.find_element_by_link_text('Willow Rosenberg')
 
-        # Next, Buffy clicks on the "show all groups" options.  She sees a list of contacts.
+        # Buffy wonders whether this will work for text that she put in contacts' details.
+        search_input.clear()
+        search_input.send_keys("appy meals")
+        visible_contacts = [contact for contact in
+            self.browser.find_elements_by_class_name('list-object') if contact.is_displayed()]
+        self.assertEquals(1, len(visible_contacts))
+        self.browser.find_element_by_link_text('Spike')
 
-        # When she selects the first one, it takes her to a detail page.
+        # Buffy wants to view her description of Spike without clicking on his link and going
+        # to his page, so she clicks the icon next to his name.  The description appears!
+        # When she clicks it again, it goes away.
+        spike_details = self.browser.find_element_by_xpath("//div[contains(text(), 'Happy Meals with legs')]")
+        self.assertFalse(spike_details.is_displayed())
+        self.browser.find_element_by_xpath("//a[contains(text(), 'Spike')]/following-sibling::a/span").click()
+        time.sleep(1)
+        self.assertTrue(spike_details.is_displayed())
+        self.browser.find_element_by_xpath("//a[contains(text(), 'Spike')]/following-sibling::a/span").click()
+        time.sleep(1)
+        self.assertFalse(spike_details.is_displayed())
 
-        # Buffy returns to the main list view.  She sees that it is sorted by recency
-        # by default.
+        # Buffy wonders if topics and groups have similar list pages.  She goes to the topic
+        # list view and sees that it does, with one difference - the sort button options.
+        self.browser.find_element_by_id('topic_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_topics').click()
 
-        # self.fail('Finish the test!')
-
+        # She decides to try out the one different button - "Most Linked Contacts".
+        # Two of the topics have one linked contact, Faith, and one - The Bronze - has
+        # two linked contacts, Faith and Oz.  Sure enough, when she clicks the button
+        # the topics rearrange.
+        self.assertIn("Apocalypse",
+            self.browser.find_elements_by_class_name('list-object')[0].text)
+        self.browser.find_element_by_id('list_table_contacts').click()
+        self.assertIn("The Bronze",
+            self.browser.find_elements_by_class_name('list-object')[0].text)
+            
 
 if __name__ == '__main__':
     unittest.main(warnings='ignore')

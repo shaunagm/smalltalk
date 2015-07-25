@@ -1,104 +1,171 @@
 [
 {
     "model": "main.contact",
+    "pk": 2,
     "fields": {
         "details": "WOOOOSAD",
         "shortname": "Snyder"
-    },
-    "pk": 2
+    }
 },
 {
     "model": "main.contact",
+    "pk": 3,
     "fields": {
         "details": "Watcher!??",
         "shortname": "Giles"
-    },
-    "pk": 3
+    }
 },
 {
     "model": "main.contact",
+    "pk": 4,
     "fields": {
         "details": "\"The truth is, I like this world. You've got... dog racing, Manchester United, and you've got people. Billions of people walking around like Happy Meals with legs.\"",
         "shortname": "Spike"
-    },
-    "pk": 4
+    }
 },
 {
     "model": "main.contact",
+    "pk": 5,
     "fields": {
         "details": "\"Tact is just not saying true stuff. I'll pass.\"",
         "shortname": "Cordelia"
-    },
-    "pk": 5
+    }
 },
 {
     "model": "main.contact",
+    "pk": 6,
     "fields": {
         "details": "Hacker, witch, and bff",
         "shortname": "Willow Rosenberg"
-    },
-    "pk": 6
+    }
 },
 {
     "model": "main.contact",
+    "pk": 7,
     "fields": {
         "details": "Comfortador.",
         "shortname": "Xander Harris"
-    },
-    "pk": 7
+    }
+},
+{
+    "model": "main.contact",
+    "pk": 8,
+    "fields": {
+        "details": "Werewolf, musician, philosopher.",
+        "shortname": "Oz"
+    }
+},
+{
+    "model": "main.contact",
+    "pk": 9,
+    "fields": {
+        "details": "5 by 5.",
+        "shortname": "Faith"
+    }
 },
 {
     "model": "main.group",
+    "pk": 4,
     "fields": {
         "details": "People who need people are the luckiest people in the world.",
-        "contacts": [],
-        "shortname": "People"
-    },
-    "pk": 4
+        "shortname": "People",
+        "contacts": [
+            8
+        ]
+    }
 },
 {
     "model": "main.group",
+    "pk": 5,
     "fields": {
         "details": "They fight evil!",
-        "contacts": [],
-        "shortname": "Scoobies"
-    },
-    "pk": 5
+        "shortname": "Scoobies",
+        "contacts": [
+            8
+        ]
+    }
 },
 {
     "model": "main.group",
+    "pk": 6,
     "fields": {
         "details": "People who eat people are the worst kind of people in the world.",
-        "contacts": [],
-        "shortname": "Vampires"
-    },
-    "pk": 6
+        "shortname": "Vampires",
+        "contacts": []
+    }
 },
 {
     "model": "main.topic",
+    "pk": 1,
     "fields": {
+        "link": "",
+        "archived": false,
         "details": "If it comes, beep me.",
-        "link": "",
         "shortname": "Apocalypse"
-    },
-    "pk": 1
+    }
 },
 {
     "model": "main.topic",
+    "pk": 2,
     "fields": {
+        "link": "",
+        "archived": false,
         "details": "It's in the bad part of town... about half a block from the good part of town. ",
-        "link": "",
         "shortname": "The Bronze"
-    },
-    "pk": 2
+    }
 },
 {
     "model": "main.topic",
+    "pk": 3,
     "fields": {
-        "details": "The stakes are high! And pointy.",
         "link": "",
+        "archived": false,
+        "details": "The stakes are high! And pointy.",
         "shortname": "Stakes"
-    },
-    "pk": 3
+    }
+},
+{
+    "model": "main.topiccontactrelationship",
+    "pk": 1,
+    "fields": {
+        "topic": 1,
+        "archived": false,
+        "contact": 9,
+        "via_group_name": null,
+        "via_group": false
+    }
+},
+{
+    "model": "main.topiccontactrelationship",
+    "pk": 2,
+    "fields": {
+        "topic": 2,
+        "archived": false,
+        "contact": 9,
+        "via_group_name": null,
+        "via_group": false
+    }
+},
+{
+    "model": "main.topiccontactrelationship",
+    "pk": 3,
+    "fields": {
+        "topic": 3,
+        "archived": false,
+        "contact": 9,
+        "via_group_name": null,
+        "via_group": false
+    }
+},
+{
+    "model": "main.topiccontactrelationship",
+    "pk": 4,
+    "fields": {
+        "topic": 2,
+        "archived": false,
+        "contact": 8,
+        "via_group_name": null,
+        "via_group": false
+    }
 }
 ]
