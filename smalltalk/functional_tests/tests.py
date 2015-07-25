@@ -169,7 +169,6 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertIn("Are they a thing?",
             self.browser.find_element_by_id('topic_details').text)
 
-        # self.fail('Finish the test!')
 
 class ReturningVisitorTest(LiveServerTestCase):
 
@@ -222,7 +221,7 @@ class ReturningVisitorTest(LiveServerTestCase):
         # Buffy selects Snyder and Cordelia and clicks submit.  The page now shows
         # Snyder, Giles, and Cordelia as part of the Scoobies.
         self.browser.find_element_by_id('id_contacts_0').click()
-        self.browser.find_element_by_id('id_contacts_3').click()
+        self.browser.find_element_by_id('id_contacts_2').click()
         self.browser.find_element_by_id('manage_contact_submit').click()
         self.browser.find_element_by_link_text('Snyder')
         self.browser.find_element_by_link_text('Giles')
@@ -233,10 +232,9 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.assertFalse(self.browser.find_element_by_id("inline_contact_div").is_displayed())
 
         # Buffy realizes that she doesn't want Snyder in the Scoobies group. She
-        # selects "Manage Contacts" again.  She deselects Snyder and selects Giles,
-        # and clicks submit.
+        # selects "Manage Contacts" again.  She deselects Snyder and clicks submit.
         self.browser.find_element_by_id('load_contact_manager').click()
-        self.browser.find_element_by_id('id_contacts_0').click()
+        self.browser.find_element_by_id('id_contacts_2').click()
         self.browser.find_element_by_id('manage_contact_submit').click()
         with self.assertRaises(NoSuchElementException):
             self.browser.find_element_by_link_text('Snyder')
@@ -294,7 +292,7 @@ class ReturningVisitorTest(LiveServerTestCase):
 
         # # Buffy selects Cordelia and Spike and clicks submit.  The page
         # now shows Giles, Cordelia and Spike as being tagged with this topic.
-        self.browser.find_element_by_id('id_contacts_2').click()
+        self.browser.find_element_by_id('id_contacts_0').click()
         self.browser.find_element_by_id('id_contacts_3').click()
         self.browser.find_element_by_id('manage_contact_submit').click()
         self.browser.find_element_by_link_text('Giles')
@@ -305,7 +303,7 @@ class ReturningVisitorTest(LiveServerTestCase):
         # so she selects "Manage Contacts" again.  She deselects Spike and clicks submit.
         # Now he is no longer listed.
         self.browser.find_element_by_id('load_contact_manager').click()
-        self.browser.find_element_by_id('id_contacts_2').click()
+        self.browser.find_element_by_id('id_contacts_3').click()
         self.browser.find_element_by_id('manage_contact_submit').click()
         with self.assertRaises(NoSuchElementException):
             self.browser.find_element_by_link_text('Spike')
@@ -456,16 +454,27 @@ class ReturningVisitorTest(LiveServerTestCase):
         with self.assertRaises(NoSuchElementException):
             self.browser.find_element_by_link_text('Stakes')
 
-    # def test_can_view_lists_of_info(self):
+    def test_can_view_lists_of_info(self):
+        # Buffy wants to see all of the contacts she's added.  She sees a navigation
+        # link that says "show all contacts" and clicks it.  Buffy is taken to a view
+        # with multiple contacts listed.
+        self.browser.find_element_by_id('contact_dropdown_toggle').click()
+        self.browser.find_element_by_id('nav_show_contacts').click()
+        self.assertEquals(6,
+            len(self.browser.find_elements_by_class_name('list-object')))
 
-        # Buffy wants to see all of the information she's added.  She sees a navigation
-        # link that says "show all topics" and clicks it.
+        # When she selects the first one, it takes her to a detail page for that contact.
+        self.browser.find_element_by_link_text('Snyder').click()
+        self.assertIn("Snyder Contact Details", self.browser.title)
+        self.browser.back()
 
-        # Buffy is taken to a view with multiple topics listed.  When she selects the first
-        # one, it takes her to a detail page.
-
-        # Buffy returns to the main list view.  She sees that it is sorted by recency
+        # Buffy returns to the main list view.  She sees that it is sorted alphabetically
         # by default.
+        self.assertIn("Cordelia",
+            self.browser.find_elements_by_class_name('list-object')[0].text)
+        self.assertIn("Xander Harris",
+            self.browser.find_elements_by_class_name('list-object')[5].text)
+
 
         # Next, Buffy clicks on the "show all contacts" options.  She sees a list of contacts.
 
@@ -480,6 +489,8 @@ class ReturningVisitorTest(LiveServerTestCase):
 
         # Buffy returns to the main list view.  She sees that it is sorted by recency
         # by default.
+
+        # self.fail('Finish the test!')
 
 
 if __name__ == '__main__':

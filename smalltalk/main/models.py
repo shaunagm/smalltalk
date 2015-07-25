@@ -1,9 +1,26 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 
+# Custom Managers
+class CustomContactManager(models.Manager):
+    def get_queryset(self):
+        return super(CustomContactManager, self).get_queryset().order_by('shortname')
+
+class CustomGroupManager(models.Manager):
+    def get_queryset(self):
+        return super(CustomGroupManager, self).get_queryset().order_by('shortname')
+
+class CustomTopicManager(models.Manager):
+    def get_queryset(self):
+        return super(CustomTopicManager, self).get_queryset().exclude(archived=1)
+
+
+# Models
 class Contact(models.Model):
     shortname = models.CharField(max_length=100, unique=True)
     details = models.TextField(max_length=5000, blank=True)
+
+    objects = CustomContactManager()
 
     def name(self):
         return self.shortname
@@ -47,6 +64,8 @@ class Group(models.Model):
     shortname = models.CharField(max_length=100, unique=True)
     details = models.TextField(max_length=5000, blank=True)
     contacts = models.ManyToManyField(Contact)
+
+    objects = CustomGroupManager()
 
     def name(self):
         return self.shortname
@@ -128,8 +147,11 @@ class Topic(models.Model):
     shortname = models.CharField(max_length=100, unique=True)
     details = models.TextField(max_length=5000, blank=True)
     link = models.CharField(max_length=200, blank=True)
+    archived = models.BooleanField(default=False)
     contacts = models.ManyToManyField(Contact, through='TopicContactRelationship')
     group_set = models.ManyToManyField(Group, through='TopicGroupRelationship')
+
+    objects = CustomTopicManager()
 
     def name(self):
         return self.shortname
@@ -179,7 +201,11 @@ class TopicContactRelationship(models.Model):
     via_group = models.BooleanField(default=False)
     via_group_name = models.ForeignKey(Group, null=True)
 
+    objects = CustomTopicManager()
+
 class TopicGroupRelationship(models.Model):
     topic = models.ForeignKey(Topic)
     group = models.ForeignKey(Group)
     archived = models.BooleanField(default=False)
+
+    objects = CustomTopicManager()
