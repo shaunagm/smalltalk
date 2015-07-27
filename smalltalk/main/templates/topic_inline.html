@@ -1,4 +1,4 @@
-
+<div class="topics_div">
 <h3>Topics</h3>
 
     <div id="topic_list">
@@ -15,13 +15,12 @@
         {% endfor %}
     </div>
 
-    <button type="button" class="btn btn-default btn-sm" id="load_topic_manager"
-    onClick="$('#inline_topic_div').show()">Manage</button>
+    <button type="button" class="btn btn-default btn-sm manager-button" id="load_topic_manager"
+        toggle-state="off">Manage</button>
     <button id="manage_topic_submit" class="btn btn-default" href="#">Save</button>
-    <button id="manage_topic_close" class="btn btn-default" href="#"
-    onClick="$('#inline_topic_div').hide()">Close</button>
 
-    <div id="inline_topic_div">
+
+    <div id="inline_topic_div" class="inline_div">
 
         Filter options: <input id="filter_options" />
 
@@ -34,3 +33,4 @@
         </form>
 
     </div>
+</div>

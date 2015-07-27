@@ -53,6 +53,10 @@ $( document ).ready(function() {
 
     $("#new_group_submit").click(new_group_submit);
 
+    $(".manager-button").click(function(){
+        toggle_manage_button(this);
+    });
+
     $("#manage_group_submit").click(function() {
         update_manager("Group");
     });
@@ -66,6 +70,18 @@ $( document ).ready(function() {
     });
 
 });
+
+function toggle_manage_button(elem) {
+    if (elem.getAttribute("toggle-state") ==  "off") {
+        elem.setAttribute("toggle-state", "on");
+        elem.innerHTML = "Close";
+        $(elem).parent().children('.inline_div').show();
+    } else {
+        elem.setAttribute("toggle-state", "off");
+        elem.innerHTML = "Manage";
+        $(elem).parent().children('.inline_div').hide();
+    };
+}
 
 function process_fuse_text_match(input_text_field) {
     // Takes the name of the containing div and creates an array of items to search through.
@@ -91,6 +107,10 @@ function process_fuse_text_match(input_text_field) {
             $("#" + item.html_id).parents("li").show();
         });
     };
+}
+
+function manager_toggle(manager_type){
+    $('#inline_contact_div').show();
 }
 
 function update_manager(object_type_to_adjust) {

@@ -1,4 +1,5 @@
 
+<div class="contacts_div">
 <h3>Contacts</h3>
 
     <div id="contact_list">
@@ -16,15 +17,12 @@
 
     </div>
 
-    <button type="button" class="btn btn-default btn-sm" id="load_contact_manager"
-        onClick="$('#inline_contact_div').show();">Manage</button>
-
-    <button id="manage_contact_close" class="btn btn-default btn-sm" href="#"
-        onClick="$('#inline_contact_div').hide();">Close</button>
+    <button type="button" class="btn btn-default btn-sm manager-button" id="load_contact_manager"
+        toggle-state="off">Manage</button>
 
     <button id="manage_contact_submit" class="btn btn-default btn-sm" href="#">Save</button>
 
-    <div id="inline_contact_div">
+    <div id="inline_contact_div" class="inline_div" >
 
         Filter options: <input id="filter_options" />
 
@@ -37,3 +35,4 @@
         </form>
 
     </div>
+</div>
