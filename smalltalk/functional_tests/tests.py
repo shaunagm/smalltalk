@@ -228,7 +228,7 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_link_text('Cordelia')
 
         # Buffy closes the manage contacts form, and it disappears.
-        self.browser.find_element_by_id('manage_contact_close').click()
+        self.browser.find_element_by_id('load_contact_manager').click()
         self.assertFalse(self.browser.find_element_by_id("inline_contact_div").is_displayed())
 
         # Buffy realizes that she doesn't want Snyder in the Scoobies group. She
@@ -274,7 +274,7 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_link_text('The Bronze')
 
         # Buffy closes the manage topics form, and it disappears.
-        self.browser.find_element_by_id('manage_topic_close').click()
+        self.browser.find_element_by_id('load_topic_manager').click()
         self.assertFalse(self.browser.find_element_by_id("inline_topic_div").is_displayed())
 
         # Buffy wonders if she can add groups and contacts directly from the topics
@@ -302,7 +302,6 @@ class ReturningVisitorTest(LiveServerTestCase):
         # # Buffy realizes that she doesn't want Spike to know about the apocalypse,
         # so she selects "Manage Contacts" again.  She deselects Spike and clicks submit.
         # Now he is no longer listed.
-        self.browser.find_element_by_id('load_contact_manager').click()
         self.browser.find_element_by_xpath("//label[contains(text(), 'Spike')]/input").click()
         self.browser.find_element_by_id('manage_contact_submit').click()
         with self.assertRaises(NoSuchElementException):
@@ -310,7 +309,7 @@ class ReturningVisitorTest(LiveServerTestCase):
 
         # Next Buffy tries to add a group to the topic.  She closes the contact form
         # and opens the group form.
-        self.browser.find_element_by_id('manage_contact_close').click()
+        self.browser.find_element_by_id('load_contact_manager').click()
         self.assertFalse(self.browser.find_element_by_id("inline_contact_div").is_displayed())
         self.browser.find_element_by_id('load_group_manager').click()
         self.assertTrue(self.browser.find_element_by_id("inline_group_div").is_displayed())
@@ -394,9 +393,9 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_xpath("//label[contains(text(), 'The Bronze')]/input").click()
         self.browser.find_element_by_id('manage_topic_submit').click()
         self.browser.find_element_by_link_text('The Bronze')
-        self.browser.find_element_by_id('load_topic_manager').click()
         self.browser.find_element_by_xpath("//label[contains(text(), 'The Bronze')]/input").click()
         self.browser.find_element_by_id('manage_topic_submit').click()
+        time.sleep(1)
         with self.assertRaises(NoSuchElementException):
             self.browser.find_element_by_link_text('The Bronze')
 
@@ -454,6 +453,40 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_link_text('Giles').click()
         with self.assertRaises(NoSuchElementException):
             self.browser.find_element_by_link_text('Stakes')
+
+    def test_can_filter_options_in_inlines(self):
+        # When Buffy is on the detail page for a topic, she notices a prompt that says
+        # "Filter options". She decides to try it out.
+        self.browser.get('%s' % (self.live_server_url + '/topic/2/'))
+        self.browser.find_element_by_id('load_contact_manager').click()
+        filter_input = self.browser.find_element_by_xpath(
+            "//div[@id='inline_contact_div']/input[1]")
+
+        # First, she types in only a few letters, "Wil". It shows both Giles and Willow.
+        filter_input.send_keys("Wil")
+        visible_contacts = [contact for contact in
+            self.browser.find_elements_by_name('contacts') if contact.is_displayed()]
+        self.assertEquals(2, len(visible_contacts))
+        self.assertIn("Giles",
+            self.browser.find_element_by_id("contact_manage_form").text)
+        self.assertIn("Willow Rosenberg",
+            self.browser.find_element_by_id("contact_manage_form").text)
+
+        # She adds a few more letters.  It now only shows Willow.
+        filter_input.send_keys("llow")
+        visible_contacts = [contact for contact in
+            self.browser.find_elements_by_name('contacts') if contact.is_displayed()]
+        self.assertEquals(1, len(visible_contacts))
+        self.assertIn("Willow Rosenberg",
+            self.browser.find_element_by_id("contact_manage_form").text)
+
+        # When she deletes the content of the filter inpux box, everyone appears again.
+        for _ in range(7):
+            filter_input.send_keys(Keys.BACKSPACE)
+        time.sleep(1)
+        visible_contacts = [contact for contact in
+            self.browser.find_elements_by_name('contacts') if contact.is_displayed()]
+        self.assertEquals(8, len(visible_contacts))
 
     def test_can_view_lists_of_info(self):
         # Buffy wants to see all of the contacts she's added.  She sees a navigation
@@ -538,7 +571,7 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_id('list_table_contacts').click()
         self.assertIn("The Bronze",
             self.browser.find_elements_by_class_name('list-object')[0].text)
-            
+
 
 if __name__ == '__main__':
     unittest.main(warnings='ignore')
