@@ -29,6 +29,18 @@ $( document ).ready(function() {
         oTable.fnSort([  [4,'desc']] );
     });
 
+    $('#inline_contact_div #filter_options').keyup(function (){
+        process_fuse_text_match('#inline_contact_div');
+    });
+
+    $('#inline_group_div #filter_options').keyup(function (){
+        process_fuse_text_match('#inline_group_div');
+    });
+
+    $('#inline_topic_div #filter_options').keyup(function (){
+        process_fuse_text_match('#inline_topic_div');
+    });
+
     $("#new_contact_button").click(function(e) {
         $("#contact_form_container").show();
     });
@@ -54,6 +66,32 @@ $( document ).ready(function() {
     });
 
 });
+
+function process_fuse_text_match(input_text_field) {
+    // Takes the name of the containing div and creates an array of items to search through.
+    var search_array = []
+    $('label', $(input_text_field + " form ul")).each(function () {
+        search_array.push({'html_id': $(this).children("input").attr('id'),
+            'name': $(this).text() });
+    });
+
+    // Takes the search text input name, and creates a search item.
+    var search_text = $(input_text_field + " #filter_options").val();
+
+    if(search_text.replace(/\s/g,"") == ""){
+        $('li', $(input_text_field + " form ul")).show();  // Show all
+    } else {
+        // Gets array of matching items using Fuse.
+        var f = new Fuse(search_array, {keys: ['name']});
+        var result = f.search(search_text);
+
+        // Alters HTML so viewer can see matching items.
+        $('li', $(input_text_field + " form ul")).hide();
+        result.forEach(function(item) {
+            $("#" + item.html_id).parents("li").show();
+        });
+    };
+}
 
 function update_manager(object_type_to_adjust) {
 

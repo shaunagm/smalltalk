@@ -1,7 +1,5 @@
 
-<h3>Contacts
-    <button type="button" class="btn btn-default btn-sm" id="load_contact_manager"
-        onClick="$('#inline_contact_div').show()">Manage</button> </h3>
+<h3>Contacts</h3>
 
     <div id="contact_list">
         {% if no_contacts_message %}
@@ -18,7 +16,17 @@
 
     </div>
 
+    <button type="button" class="btn btn-default btn-sm" id="load_contact_manager"
+        onClick="$('#inline_contact_div').show();">Manage</button>
+
+    <button id="manage_contact_close" class="btn btn-default btn-sm" href="#"
+        onClick="$('#inline_contact_div').hide();">Close</button>
+
+    <button id="manage_contact_submit" class="btn btn-default btn-sm" href="#">Save</button>
+
     <div id="inline_contact_div">
+
+        Filter options: <input id="filter_options" />
 
         <form method="POST" id="contact_manage_form">
 
@@ -27,9 +35,5 @@
             {{ manage_contact_form }}
 
         </form>
-
-        <button id="manage_contact_submit" class="btn btn-default" href="#">Save</button>
-        <button id="manage_contact_close" class="btn btn-default" href="#"
-        onClick="$('#inline_contact_div').hide()">Close</button>
 
     </div>
