@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^topic/new/$', views.TopicCreate.as_view(), name='new_topic_view'),
     url(r'^topic/(?P<pk>[0-9]+)/$', views.TopicDetail.as_view(), name='topic_detail'),
     url(r'^topic/(?P<pk>[0-9]+)/edit$', views.TopicEdit.as_view(), name='topic_edit'),
+    url(r'^toggle-topic$', views.toggle_topic, name='toggle_topic'),
 
     url(r'^update_manager$', views.update_manager, name='update_manager'),
 

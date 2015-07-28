@@ -39,7 +39,7 @@
 
                         {% for object in object_list %}
 
-                        <tr>
+                        <tr class="{{ object_type }}{{ object.archived }}">
                             <td class="list-object">
                                 <a href="{{ object.get_url }}">{{ object.name }}</a>
                                 <a href="#item{{ object.pk }}" data-toggle="collapse">

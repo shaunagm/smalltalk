@@ -10,7 +10,7 @@
 
         {% for topic in object.topic_set.all %}
 
-            <a href="{{ topic.get_url }}"> {{ topic.name }}</a>
+            {% include 'topic_item.html' %}
 
         {% endfor %}
     </div>

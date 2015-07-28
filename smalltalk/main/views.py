@@ -180,6 +180,20 @@ def update_manager(request):
         return JsonResponse({'status': 'Success', 'current_dict': current_dict})
     return JsonResponse(json.dumps({'status': 'There was a servor error.'}), safe=False)
 
+def toggle_topic(request):
+    pk = request.POST.get('pk', None)
+    type = request.POST.get('toggle_type', None)
+    if pk and type:
+        topic = Topic.objects.get(pk=int(pk))
+        if type == "starred":
+            topic.starred = not topic.starred
+        if type == "archived":
+            topic.archived = not topic.archived
+        topic.save()
+        return JsonResponse(json.dumps({'status': 'success', 'topic_data':
+            {'starred': topic.starred, 'archived': topic.archived}}), safe=False)
+    return JsonResponse(json.dumps({'status': 'There was a servor error.'}), safe=False)
+
 def create_new_contact(request):
     name = request.POST.get('name', None)
     details = request.POST.get('details', None)

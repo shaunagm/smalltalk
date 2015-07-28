@@ -69,7 +69,46 @@ $( document ).ready(function() {
         update_manager("Topic");
     });
 
+    $("#topic_star").click(function() {
+        toggle_topic("starred");
+    });
+
+    $("#topic_archive").click(function() {
+        toggle_topic("archived");
+    });
+
 });
+
+function toggle_topic(toggle_type) {
+    $.ajax({
+        url: '/toggle-topic',
+        type: 'POST',
+        data: {'pk': $("#object-details").attr("object-pk"),
+            'toggle_type': toggle_type},
+        dataType: 'json',
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        },
+        success: function(data, textStatus, jqXHR) {
+            var d = $.parseJSON(data);
+            if (d['topic_data']['starred'] == 1) {
+                $("#topic_star span").text("Starred");
+                $("#topic_star span").addClass('glyphicon-star').removeClass('glyphicon-star-empty');
+            } else {
+                $("#topic_star span").text("Star");
+                $("#topic_star span").addClass('glyphicon-star-empty').removeClass('glyphicon-star');
+            };
+            if (d['topic_data']['archived'] == 1) {
+                $("#topic_archive span").text("Archived");
+                $("#topic_archive span").addClass('glyphicon-upload').removeClass('glyphicon-download');
+            } else {
+                $("#topic_archive span").text("Archive");
+                $("#topic_archive span").addClass('glyphicon-download').removeClass('glyphicon-upload');
+            };
+        },
+        error: function (response) {
+        }});
+}
 
 function toggle_manage_button(elem) {
     if (elem.getAttribute("toggle-state") ==  "off") {
@@ -107,10 +146,6 @@ function process_fuse_text_match(input_text_field) {
             $("#" + item.html_id).parents("li").show();
         });
     };
-}
-
-function manager_toggle(manager_type){
-    $('#inline_contact_div').show();
 }
 
 function update_manager(object_type_to_adjust) {

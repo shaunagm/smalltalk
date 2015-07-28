@@ -148,6 +148,7 @@ class Topic(models.Model):
     details = models.TextField(max_length=5000, blank=True)
     link = models.CharField(max_length=200, blank=True)
     archived = models.BooleanField(default=False)
+    starred = models.BooleanField(default=False)
     contacts = models.ManyToManyField(Contact, through='TopicContactRelationship')
     group_set = models.ManyToManyField(Group, through='TopicGroupRelationship')
 

@@ -1,0 +1,31 @@
+<div class="row" id="topic-item">
+
+    <div class="col-md-2">
+        <a href="{{ topic.get_url }}"> {{ topic.name }}</a>
+
+        <div class="dropdown pull-right">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-download" title="archive"></span>
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li><a href="#">Archive for just this contact</a></li>
+                <li><a href="#">Archive for all groups and contacts</a></li>
+            </ul>
+        </div>
+
+        <div class="dropdown pull-right">
+
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-star" title="star"></span>
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li><a href="#">Star for just this contact</a></li>
+                <li><a href="#">Star for all groups and contacts</a></li>
+            </ul>
+
+        </div>
+
+    </div>
+</div>

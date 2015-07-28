@@ -3,10 +3,29 @@
 {% block inner-content %}
 
     <h1 id="topic_name">{{ object.name }}</h1>
+
+    <h4 id="object_icons">
+        <a id="topic_edit" href="{% url 'topic_edit' object.pk %}">
+            <span class="glyphicon glyphicon-edit" title="edit">Edit</span>
+        </a>
+        <a href="#" id="topic_star">
+            {% ifequal object.starred 1 %}
+                <span class="glyphicon glyphicon-star" title="star">Starred</span>
+            {% else %}
+                <span class="glyphicon glyphicon-star-empty" title="star">Star</span>
+            {% endifequal %}
+        </a>
+        <a href="#" id="topic_archive">
+        {% ifequal object.archived 1 %}
+            <span class="glyphicon glyphicon-upload" title="archive">Archived</span>
+        {% else %}
+            <span class="glyphicon glyphicon-download" title="archive">Archive</span>
+        {% endifequal %}
+        </a>
+    </h4>
+
     <h3 id="topic_details">{{ object.details}}</h3>
     <h3 id="topic_link">{{ object.link}}</h3>
-
-    <h2><a id="topic_edit" href="{% url 'topic_edit' object.pk %}">Edit</a></h2>
 
     {% include 'contact_inline.html' %}
 

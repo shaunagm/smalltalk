@@ -3,8 +3,14 @@
 {% block inner-content %}
 
     <h1 id="contact_name">{{ object.name }}</h1>
+
+    <h4 id="object_icons">
+        <a id="contact_edit" href="{% url 'contact_edit' object.pk %}">
+            <span class="glyphicon glyphicon-edit" title="edit">Edit</span>
+        </a>
+    </h4>
+
     <h3 id="contact_details">{{ object.details}}</h3>
-    <h2><a id="contact_edit" href="{% url 'contact_edit' object.pk %}">Edit</a></h2>
 
     {% include 'group_inline.html' %}
 

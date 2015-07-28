@@ -5,3 +5,12 @@
 #inline_group_div, #inline_contact_div, #inline_topic_div {
     display: none;
 }
+
+#object_icons a {
+    text-decoration: none;
+}
+
+/* Class for archived topics in topics list */
+.TopicsTrue {
+    background-color: #F0F0F0;
+}
