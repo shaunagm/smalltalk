@@ -11,6 +11,22 @@
 }
 
 /* Class for archived topics in topics list */
-.TopicsTrue {
+.archived-object {
     background-color: #F0F0F0;
+}
+
+/* Auto-hide in inlines */
+#topic_list .archived-object {
+    display: none;
+}
+
+
+.topic-dropdown .dropdown-menu {
+    padding: 10px;
+    min-width: 200px;
+    line-height: 20px;
+}
+
+.archive-keyword, .star-keyword {
+    display: inline;
 }

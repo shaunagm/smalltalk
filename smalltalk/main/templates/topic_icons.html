@@ -1,0 +1,88 @@
+        <div class="dropdown pull-right topic-dropdown" id="archive-{{ topic.pk }}">
+
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                {% ifequal topic.archived 1 %}
+                    <span class="glyphicon glyphicon-upload archive-icon"></span>
+                {% else %}
+                    <span class="glyphicon glyphicon-download archive-icon"></span>
+                {% endifequal %}
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li>
+                    <div class="global-archive" onClick="toggle_topic('archive', 1, {{ topic.pk }})">
+                        {% ifequal topic.archived 1 %}
+                            <div class="archive-keyword">Un-archive</div>
+                        {% else %}
+                            <div class="archive-keyword">Archive</div>
+                        {% endifequal %}
+                        {% ifequal object_type "Topic" %}
+                            this topic and all items with this topic
+                        {% else %}
+                            across all items with this topic
+                        {% endifequal %}
+                    </div>
+                </li>
+
+                <li>
+                    <div class="local-archive" onClick="toggle_topic('archive', 0, {{ topic.pk }})">
+                        {% ifequal topic.archived 1 %}
+                            <div class="archive-keyword">Un-archive</div>
+                        {% else %}
+                            <div class="archive-keyword">Archive</div>
+                        {% endifequal %}
+                        {% ifequal object_type "Topic" %}
+                            just the topic (will not affect items already connected to this topic)
+                        {% else %}
+                            just for this item (will not affect the topic as a whole or other items connected to it)
+                        {% endifequal %}
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+
+
+        <div class="dropdown pull-right topic-dropdown" id="star-{{ topic.pk }}">
+
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                {% ifequal topic.starred 1 %}
+                    <span class="glyphicon glyphicon-star star-icon"></span>
+                {% else %}
+                    <span class="glyphicon glyphicon-star-empty star-icon"></span>
+                {% endifequal %}
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li>
+                    <div class="global-star" onClick="toggle_topic('star', 1, {{ topic.pk }})">
+                        {% ifequal topic.starred 1 %}
+                            <div class="star-keyword">Un-star</div>
+                        {% else %}
+                            <div class="star-keyword">Star</div>
+                        {% endifequal %}
+                        {% ifequal object_type "Topic" %}
+                            this topic and all items with this topic
+                        {% else %}
+                            across all items with this topic
+                        {% endifequal %}
+                    </div>
+                </li>
+
+                <li>
+                    <div class="local-star" onClick="toggle_topic('star', 0, {{ topic.pk }})">
+                        {% ifequal topic.starred 1 %}
+                            <div class="star-keyword">Un-star</div>
+                        {% else %}
+                            <div class="star-keyword">Star</div>
+                        {% endifequal %}
+                        {% ifequal object_type "Topic" %}
+                            just the topic (will not affect items already connected to this topic)
+                        {% else %}
+                            just for this item (will not affect the topic as a whole or other items connected to it)
+                        {% endifequal %}
+                    </div>
+                </li>
+            </ul>
+
+        </div>

@@ -57,7 +57,7 @@ class NewVisitorTest(LiveServerTestCase):
         name_input = self.browser.find_element_by_id('id_shortname')
         name_input.send_keys("Willow Rosenberg")
         self.browser.find_element_by_id('edit_contact_submit').click()
-        self.assertIn("Willow Rosenberg Contact Details", self.browser.title)
+        self.assertIn("Willow Rosenberg Details", self.browser.title)
 
         # She decides she wants to add additional information to the contact, so
         # she clicks the "edit" button.
@@ -103,7 +103,7 @@ class NewVisitorTest(LiveServerTestCase):
         name_input = self.browser.find_element_by_id('id_shortname')
         name_input.send_keys("Scoobies")
         self.browser.find_element_by_id('edit_group_submit').click()
-        self.assertIn("Scoobies Group Details", self.browser.title)
+        self.assertIn("Scoobies Details", self.browser.title)
 
         # She decides she wants to add additional information to the group, so
         # she clicks the "edit" button.
@@ -151,7 +151,7 @@ class NewVisitorTest(LiveServerTestCase):
         name_input = self.browser.find_element_by_id('id_shortname')
         name_input.send_keys("Selkies")
         self.browser.find_element_by_id('edit_topic_submit').click()
-        self.assertIn("Selkies Topic Details", self.browser.title)
+        self.assertIn("Selkies Details", self.browser.title)
 
         # She decides she wants to add additional information to the topic, so
         # she clicks the "edit" button.
@@ -236,6 +236,7 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_id('load_contact_manager').click()
         self.browser.find_element_by_xpath("//label[contains(text(), 'Snyder')]/input").click()
         self.browser.find_element_by_id('manage_contact_submit').click()
+        time.sleep(.5)
         with self.assertRaises(NoSuchElementException):
             self.browser.find_element_by_link_text('Snyder')
 
@@ -267,11 +268,11 @@ class ReturningVisitorTest(LiveServerTestCase):
         self.browser.find_element_by_link_text('People').click()
         self.browser.find_element_by_id('load_topic_manager').click()
 
-        # Buffy selects the topic labelled "The Bronze" and clicks submit.  The page
+        # Buffy selects the topic labelled "Stakes" and clicks submit.  The page
         # now lists the People group as having that topic.
-        self.browser.find_element_by_xpath("//label[contains(text(), 'The Bronze')]/input").click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'Stakes')]/input").click()
         self.browser.find_element_by_id('manage_topic_submit').click()
-        self.browser.find_element_by_link_text('The Bronze')
+        self.browser.find_element_by_link_text('Stakes')
 
         # Buffy closes the manage topics form, and it disappears.
         self.browser.find_element_by_id('load_topic_manager').click()
@@ -304,6 +305,7 @@ class ReturningVisitorTest(LiveServerTestCase):
         # Now he is no longer listed.
         self.browser.find_element_by_xpath("//label[contains(text(), 'Spike')]/input").click()
         self.browser.find_element_by_id('manage_contact_submit').click()
+        time.sleep(.5)
         with self.assertRaises(NoSuchElementException):
             self.browser.find_element_by_link_text('Spike')
 
@@ -499,7 +501,7 @@ class ReturningVisitorTest(LiveServerTestCase):
 
         # When she selects on one of them, it takes her to a detail page for that contact.
         self.browser.find_element_by_link_text('Snyder').click()
-        self.assertIn("Snyder Contact Details", self.browser.title)
+        self.assertIn("Snyder Details", self.browser.title)
         self.browser.back()
 
         # Buffy returns to the main list view.  She sees that it is sorted alphabetically
@@ -566,11 +568,128 @@ class ReturningVisitorTest(LiveServerTestCase):
         # Two of the topics have one linked contact, Faith, and one - The Bronze - has
         # two linked contacts, Faith and Oz.  Sure enough, when she clicks the button
         # the topics rearrange.
-        self.assertIn("Apocalypse",
+        self.assertIn("Stakes",
             self.browser.find_elements_by_class_name('list-object')[0].text)
         self.browser.find_element_by_id('list_table_contacts').click()
         self.assertIn("The Bronze",
             self.browser.find_elements_by_class_name('list-object')[0].text)
+
+    def test_can_archive_topics(self):
+        # Buffy notices that there is an 'archive' option for the topics.  She sees it
+        # first on the main topics page.  When she selects it, she sees a dropdown asking
+        # if she wants to archive for all items.  She chooses to archive just for the topic.
+        self.browser.get('%s' % (self.live_server_url + '/topic/2/'))
+        self.browser.find_element_by_class_name('glyphicon-download')
+        self.browser.find_element_by_class_name('archive-icon').click()
+        self.assertIn("Archive just for this item",
+            self.browser.find_element_by_class_name('local-archive').text)
+        self.browser.find_element_by_class_name('local-archive').click()
+
+        # When she does this, the icon changes as does the text of the dropdown.
+        self.browser.find_element_by_class_name('glyphicon-upload')
+        self.browser.find_element_by_class_name('archive-icon').click()
+        self.assertIn("un-archive just for this item",
+            self.browser.find_element_by_class_name('local-archive').text)
+
+        # When she goes back to the main topic list, the topic she archived is now grayed out.
+        self.browser.get('%s' % (self.live_server_url + '/topic/all/'))
+        self.assertEquals("rgba(240, 240, 240, 1)",
+            self.browser.find_element_by_xpath("//div[@id='item2']/../..").value_of_css_property('background-color'))
+
+        # She wonders how this effects the inlines on contact pages, so she checks out Faith's
+        # page.  Everything looks normal - the link to the topic "The Bronze" is there.
+        self.browser.get('%s' % (self.live_server_url + '/contact/9/'))
+        self.browser.find_element_by_link_text('The Bronze')
+        self.browser.find_element_by_id('load_topic_manager').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'The Bronze')]/input")
+
+        # She goes back to the topic page and selected the archive option again.  When she
+        # does this, the icon changes as does the text of the dropdown.  When she goes back
+        # to the main topic list, the topic is a normal color.
+        self.browser.get('%s' % (self.live_server_url + '/topic/2/'))
+        self.browser.find_element_by_class_name('archive-icon').click()
+        self.browser.find_element_by_class_name('local-archive').click()
+        self.browser.find_element_by_class_name('glyphicon-download')
+        self.browser.find_element_by_class_name('archive-icon').click()
+        self.assertIn("archive just for this item",
+            self.browser.find_element_by_class_name('local-archive').text)
+        self.browser.get('%s' % (self.live_server_url + '/topic/all/'))
+        self.assertEquals("transparent",
+            self.browser.find_element_by_xpath("//div[@id='item2']/../..").value_of_css_property('background-color'))
+
+        # Buffy wonders what would happen if she chose the other option, "for all items", so
+        # she tries it.  As before, the topic becomes grayed, the icon changes, and the dropdown
+        # text changes.
+        self.browser.get('%s' % (self.live_server_url + '/topic/2/'))
+        self.browser.find_element_by_class_name('archive-icon').click()
+        self.browser.find_element_by_class_name('global-archive').click()
+        self.browser.find_element_by_class_name('glyphicon-upload')
+        self.browser.find_element_by_class_name('archive-icon').click()
+        self.assertIn("un-archive across all items",
+            self.browser.find_element_by_class_name('global-archive').text)
+
+        # When she checks the contact's page this time, though, the topic has disappeared
+        # from view.  It is in the form, however
+        self.browser.get('%s' % (self.live_server_url + '/contact/9/'))
+        self.assertEquals([],
+            self.browser.find_elements_by_link_text('The Bronze'))
+        visible_topics = [topic for topic in self.browser.find_elements_by_class_name('topic-item')
+            if topic.is_displayed()]
+        self.assertEquals(2, len(visible_topics))
+        self.browser.find_element_by_id('load_topic_manager').click()
+        self.browser.find_element_by_xpath("//label[contains(text(), 'The Bronze')]/input")
+
+        # She returns to the topic page and clicks un-archive just for this item.  When she
+        # checks the contact page again, she sees that the contact is still missing references
+        # to the topic.
+        self.browser.get('%s' % (self.live_server_url + '/topic/2/'))
+        self.browser.find_element_by_class_name('archive-icon').click()
+        self.browser.find_element_by_class_name('local-archive').click()
+        self.browser.get('%s' % (self.live_server_url + '/contact/9/'))
+        self.assertEquals([],
+            self.browser.find_elements_by_link_text('The Bronze'))
+        visible_topics = [topic for topic in self.browser.find_elements_by_class_name('topic-item')
+            if topic.is_displayed()]
+        self.assertEquals(2, len(visible_topics))
+
+        # She goes back to the topic page and clicks 'archive for all' and 'unarchive for all'.
+        # This *does* return Faith to normal.  She wishes it were easier to unarchive in this
+        # circumstances and files a feature request.  :P
+        self.browser.get('%s' % (self.live_server_url + '/topic/2/'))
+        self.browser.find_element_by_class_name('archive-icon').click()
+        self.browser.find_element_by_class_name('local-archive').click()
+        self.browser.find_element_by_class_name('archive-icon').click()
+        self.browser.find_element_by_class_name('global-archive').click()
+        self.browser.get('%s' % (self.live_server_url + '/contact/9/'))
+        self.browser.find_elements_by_link_text('The Bronze')
+        self.browser.find_element_by_id('load_topic_manager').click()
+        self.browser.find_elements_by_xpath("//label[contains(text(), 'The Bronze')]/input")
+
+        # Buffy sees that she can also archive topics from inline on a group or contact.
+        # She goes to Oz's contact page and clicks the archive button next to the topic
+        # 'The Bronze'. It asks if she wants to archive for all topics but she selects the
+        # local option.
+        self.browser.get('%s' % (self.live_server_url + '/contact/8/'))
+        self.assertEquals(1,
+            len(self.browser.find_elements_by_class_name('topic-item')))
+        self.browser.find_elements_by_link_text('The Bronze')
+        self.browser.find_element_by_xpath("//a[contains(text(), 'The Bronze')]/../div[1]/a").click()
+        self.browser.find_element_by_xpath("//a[contains(text(), 'The Bronze')]/../div[1]/ul/li[2]/div").click()
+
+        # Now when she refreshes Oz's page does not display any topics. But when
+        # she looks at the list of topics, 'The Bronze' is not grayed out.
+        self.browser.get('%s' % (self.live_server_url + '/contact/8/'))
+        visible_topics = [topic for topic in self.browser.find_elements_by_class_name('topic-item')
+            if topic.is_displayed()]
+        self.assertEquals(0, len(visible_topics))
+        self.browser.get('%s' % (self.live_server_url + '/topic/all/'))
+        self.assertEquals("transparent",
+            self.browser.find_element_by_xpath("//div[@id='item2']/../..").value_of_css_property('background-color'))
+
+        #### Briefly try out with groups too.
+
+    # def test_can_star_topics(self):
+        ## Like archive above, but test that it causes star to show up first.
 
 
 if __name__ == '__main__':

@@ -49,4 +49,5 @@ class ManageTopicsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         linked_object = kwargs.pop('linked_object', 0)
         super(ManageTopicsForm, self).__init__(*args, **kwargs)
+        self.fields['topics'].queryset = Topic.objects.all()
         self.fields['topics'].initial = [topic.pk for topic in linked_object.topic_set.all()]

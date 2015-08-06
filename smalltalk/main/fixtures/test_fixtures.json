@@ -167,5 +167,14 @@
         "via_group_name": null,
         "via_group": false
     }
+},
+{
+    "model": "main.topicgrouprelationship",
+    "pk": 1,
+    "fields": {
+        "topic": 2,
+        "archived": false,
+        "group": 4
+    }
 }
 ]

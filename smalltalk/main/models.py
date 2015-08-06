@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.urlresolvers import reverse
+from itertools import chain
 
 # Custom Managers
 class CustomContactManager(models.Manager):
@@ -12,8 +13,8 @@ class CustomGroupManager(models.Manager):
 
 class CustomTopicManager(models.Manager):
     def get_queryset(self):
-        return super(CustomTopicManager, self).get_queryset().exclude(archived=1)
-
+        # Gets ranked queryset by default
+        return super(CustomTopicManager, self).get_queryset().order_by('archived', 'starred', '-pk',)
 
 # Models
 class Contact(models.Model):
@@ -36,7 +37,7 @@ class Contact(models.Model):
 
     def get_topic_pks(self):
         return set([relationship.topic.pk for relationship
-            in self.topiccontactrelationship_set.all()])
+            in self.topics.all()])
 
     def adjust_groups(self, pk_set):
         group_pks = self.get_group_pks()
@@ -58,7 +59,7 @@ class Contact(models.Model):
             topic = Topic.objects.get(pk=pk)
             relationship = TopicContactRelationship.objects.get(contact=self, topic=topic)
             relationship.delete()
-        return self.topic_set.all()
+        return(self.topic_set.all())
 
 class Group(models.Model):
     shortname = models.CharField(max_length=100, unique=True)
@@ -81,7 +82,7 @@ class Group(models.Model):
 
     def get_topic_pks(self):
         return set([relationship.topic.pk for relationship
-            in self.topicgrouprelationship_set.all()])
+            in self.topics.all()])
 
     def adjust_contacts(self, pk_set):
         contact_pks = self.get_contact_pks()
@@ -171,6 +172,11 @@ class Topic(models.Model):
         return set([relationship.contact.pk for relationship
             in self.topiccontactrelationship_set.all()])
 
+    def get_archived_class(self):
+        # For use in templates
+        if self.archived:
+            return "archived-object"
+
     def adjust_contacts(self, pk_set):
         contact_pks = self.get_contact_pks()
         for pk in pk_set - contact_pks:
@@ -197,16 +203,36 @@ class Topic(models.Model):
 
 class TopicContactRelationship(models.Model):
     topic = models.ForeignKey(Topic)
-    contact = models.ForeignKey(Contact)
-    archived = models.BooleanField(default=False)
-    via_group = models.BooleanField(default=False)
+    contact = models.ForeignKey(Contact, related_name="topics")
+    via_group = models.BooleanField(default=False) # "via group" fields show how relationship was created
     via_group_name = models.ForeignKey(Group, null=True)
+    archived = models.BooleanField(default=False)
+    starred = models.BooleanField(default=False)
 
-    objects = CustomTopicManager()
+    def name(self):
+        return (self.topic.shortname + self.contact.shortname)
+
+    def __str__(self):
+        return self.name()
+
+    def get_archived_class(self):
+        # For use in templates
+        if self.archived:
+            return "archived-object"
 
 class TopicGroupRelationship(models.Model):
     topic = models.ForeignKey(Topic)
-    group = models.ForeignKey(Group)
+    group = models.ForeignKey(Group, related_name="topics")
     archived = models.BooleanField(default=False)
+    starred = models.BooleanField(default=False)
 
-    objects = CustomTopicManager()
+    def name(self):
+        return (self.topic.shortname + self.group.shortname)
+
+    def __str__(self):
+        return self.name()
+
+    def get_archived_class(self):
+        # For use in templates
+        if self.archived:
+            return "archived-object"

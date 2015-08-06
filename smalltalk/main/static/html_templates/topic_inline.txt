@@ -1,0 +1,52 @@
+<div class="row topic-item">
+
+    <div class="col-md-2">
+        <a href="{{:url}}"> {{:name}}</a>
+
+        <div class="dropdown pull-right topic-dropdown" id="archive-{{:pk}}">
+
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon {{:archive_glyphicon}} archive-icon"></span>
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li>
+                    <div class="global-archive" onClick="toggle_topic('archive', 1, {{:pk}})">
+                        {{:archive_keyword}} {{:global_text}}
+                    </div>
+                </li>
+
+                <li>
+                    <div class="local-archive" onClick="toggle_topic('archive', 0, {{:pk}})">
+                        {{:archive_keyword}} {{:local_text }}
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+
+
+        <div class="dropdown pull-right topic-dropdown" id="star-{{:pk}}">
+
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon {{:star_glyphicon}} star-icon"></span>
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li>
+                    <div class="global-star" onClick="toggle_topic('star', 1, {{:pk}})">
+                        {{:star_keyword}} {{:global_text}}
+                    </div>
+                </li>
+
+                <li>
+                    <div class="local-star" onClick="toggle_topic('star', 0, {{:pk}})">
+                        {{:star_keyword}} {{:local_text}}
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+
+    </div>
+</div>

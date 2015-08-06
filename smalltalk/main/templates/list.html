@@ -32,6 +32,10 @@
                             Most Linked Groups</button>
                     {% endifnotequal %}
 
+                    <button type="button" class="btn btn-danger view_archived_button" toggle-state="on">
+                        Hide Archived</button>
+
+
                 </div>
 
                 <table id="object_list_table" class="display" cellspacing="0" width="100%">
@@ -39,7 +43,7 @@
 
                         {% for object in object_list %}
 
-                        <tr class="{{ object_type }}{{ object.archived }}">
+                        <tr class="{{ object.get_archived_class }}">
                             <td class="list-object">
                                 <a href="{{ object.get_url }}">{{ object.name }}</a>
                                 <a href="#item{{ object.pk }}" data-toggle="collapse">

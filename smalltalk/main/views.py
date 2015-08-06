@@ -4,14 +4,16 @@ from django.views.generic import TemplateView, ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, CreateView
 from django.http import JsonResponse
+from django.contrib.contenttypes.models import ContentType
 
-from .models import Contact, Group, Topic
+from .models import Contact, Group, Topic, TopicContactRelationship, TopicGroupRelationship
 from .forms import ContactForm, GroupForm, TopicForm, ManageContactsForm, ManageGroupsForm
 
 from django.views.decorators.csrf import requires_csrf_token
 from django.shortcuts import render
 
-from .utils import group_form_helper, contact_form_helper, topic_form_helper
+from .utils import (group_form_helper, contact_form_helper, topic_form_helper, global_toggle,
+    local_toggle)
 
 ####################
 #### Meta Views ####
@@ -36,7 +38,7 @@ class ContactList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ContactList, self).get_context_data(**kwargs)
-        context['object_type'] = "Contacts"
+        context['object_type'] = "contacts"
         return context
 
 class ContactDetail(DetailView):
@@ -47,7 +49,7 @@ class ContactDetail(DetailView):
         context = super(ContactDetail, self).get_context_data(**kwargs)
         context.update(group_form_helper(self.object))
         context.update(topic_form_helper(self.object))
-        context['object_type'] = "Contact"
+        context['object_type'] = "contact"
         return context
 
 class ContactCreate(CreateView):
@@ -84,7 +86,7 @@ class GroupDetail(DetailView):
         context = super(GroupDetail, self).get_context_data(**kwargs)
         context.update(contact_form_helper(self.object))
         context.update(topic_form_helper(self.object))
-        context['object_type'] = "Group"
+        context['object_type'] = "group"
         return context
 
 class GroupEdit(UpdateView):
@@ -125,7 +127,7 @@ class TopicDetail(DetailView):
         context = super(TopicDetail, self).get_context_data(**kwargs)
         context.update(contact_form_helper(self.object))
         context.update(group_form_helper(self.object))
-        context['object_type'] = "Topic"
+        context['object_type'] = "topic"
         return context
 
 class TopicCreate(CreateView):
@@ -157,41 +159,42 @@ def update_manager(request):
         form_data = json.loads(posted_form)
         selected_items = set([int(item['pk']) for item in form_data
             if item['checked'] == True])
-        if object_type == "Contact":
-            main_object = Contact.objects.get(pk = int(object_pk))
-            if object_type_to_adjust == "Group":
-                final_items = main_object.adjust_groups(selected_items)
-            if object_type_to_adjust == "Topic":
-                final_items = main_object.adjust_topics(selected_items)
-        if object_type == "Topic":
-            main_object = Topic.objects.get(pk = int(object_pk))
-            if object_type_to_adjust == "Contact":
-                final_items = main_object.adjust_contacts(selected_items)
-            if object_type_to_adjust == "Group":
-                final_items = main_object.adjust_groups(selected_items)
-        if object_type == "Group":
-            main_object = Group.objects.get(pk = int(object_pk))
-            if object_type_to_adjust == "Contact":
-                final_items = main_object.adjust_contacts(selected_items)
-            if object_type_to_adjust == "Topic":
-                final_items = main_object.adjust_topics(selected_items)
-        current_dict = [{'name': item.shortname, 'url': item.get_url()}
-            for item in final_items]
+        object_model = ContentType.objects.get(app_label="main", model=object_type)
+        main_object = object_model.get_all_objects_for_this_type(pk=object_pk)[0]
+        if object_type_to_adjust == "group":
+            final_items = main_object.adjust_groups(selected_items)
+        if object_type_to_adjust == "topic":
+            final_items = main_object.adjust_topics(selected_items)
+        if object_type_to_adjust == "contact":
+            final_items = main_object.adjust_contacts(selected_items)
+        if object_type_to_adjust == "topic":
+            current_dict = [{'name': item.shortname, 'url': item.get_url(), 'pk': item.pk,
+                'archived': item.archived, 'starred': item.starred} for item in final_items]
+        else:
+            current_dict = [{'name': item.shortname, 'url': item.get_url()}
+                for item in final_items]
         return JsonResponse({'status': 'Success', 'current_dict': current_dict})
     return JsonResponse(json.dumps({'status': 'There was a servor error.'}), safe=False)
 
 def toggle_topic(request):
-    pk = request.POST.get('pk', None)
-    type = request.POST.get('toggle_type', None)
-    if pk and type:
-        topic = Topic.objects.get(pk=int(pk))
-        if type == "starred":
-            topic.starred = not topic.starred
-        if type == "archived":
-            topic.archived = not topic.archived
-        topic.save()
+    toggle_type = request.POST.get('toggle_type', None)
+    toggle_scope = int(request.POST.get('toggle_scope', None))
+    topic_pk = int(request.POST.get('topic_pk', None))
+    object_type = request.POST.get('object_type', None)
+    object_pk = int(request.POST.get('object_pk', None))
+    if toggle_type and topic_pk and object_type and object_pk and global_toggle:
+        if object_type == "topic":
+            object_to_adjust = Topic.objects.get(pk=topic_pk)
+        if object_type == "group":
+            object_to_adjust = TopicGroupRelationship.objects.get(topic_id = topic_pk, group_id = object_pk)
+        if object_type == "contact":
+            object_to_adjust = TopicContactRelationship.objects.get(pk=topic_pk)
+        if toggle_scope == 1:
+            object_to_adjust = global_toggle(object_to_adjust, toggle_type)
+        else:
+            object_to_adjust = local_toggle(object_to_adjust, toggle_type)
         return JsonResponse(json.dumps({'status': 'success', 'topic_data':
-            {'starred': topic.starred, 'archived': topic.archived}}), safe=False)
+            {'starred': object_to_adjust.starred, 'archived': object_to_adjust.archived}}), safe=False)
     return JsonResponse(json.dumps({'status': 'There was a servor error.'}), safe=False)
 
 def create_new_contact(request):

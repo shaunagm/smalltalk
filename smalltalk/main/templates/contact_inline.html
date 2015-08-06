@@ -2,6 +2,11 @@
 <div class="contacts_div">
 <h3>Contacts</h3>
 
+    <div class="btn-group" role="group" aria-label="...">
+        <button type="button" class="btn btn-default btn-sm manager-button" id="load_contact_manager"
+        toggle-state="off">Manage</button>
+    </div>
+
     <div id="contact_list">
         {% if no_contacts_message %}
 
@@ -17,11 +22,6 @@
 
     </div>
 
-    <button type="button" class="btn btn-default btn-sm manager-button" id="load_contact_manager"
-        toggle-state="off">Manage</button>
-
-    <button id="manage_contact_submit" class="btn btn-default btn-sm" href="#">Save</button>
-
     <div id="inline_contact_div" class="inline_div" >
 
         Filter options: <input id="filter_options" />
@@ -34,5 +34,6 @@
 
         </form>
 
+        <button id="manage_contact_submit" class="btn btn-default btn-sm" href="#">Save</button>
     </div>
 </div>

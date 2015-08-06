@@ -6,7 +6,8 @@ $( document ).ready(function() {
         "info":     false,
         "aoColumnDefs": [
             { 'bVisible': false, 'aTargets': [1,2,3,4] }
-        ]
+        ],
+        "aaSorting": []
     });
 
     $('#list_table_alpha').click(function(){
@@ -57,68 +58,129 @@ $( document ).ready(function() {
         toggle_manage_button(this);
     });
 
+    $(".view_archived_button").click(function(){
+        view_archived_toggle(this);
+    });
+
     $("#manage_group_submit").click(function() {
-        update_manager("Group");
+        update_manager("group");
     });
 
     $("#manage_contact_submit").click(function () {
-        update_manager("Contact");
+        update_manager("contact");
     });
 
     $("#manage_topic_submit").click(function () {
-        update_manager("Topic");
-    });
-
-    $("#topic_star").click(function() {
-        toggle_topic("starred");
-    });
-
-    $("#topic_archive").click(function() {
-        toggle_topic("archived");
+        update_manager("topic");
     });
 
 });
 
-function toggle_topic(toggle_type) {
+
+function append_topic(item, write_element){
+
+    var data = {
+        "name": item['name'],
+        "url": item['url'],
+        "pk": item['pk'],
+        "global_text": "this topic and all items with this topic",
+        "local_text": "just the topic (will not affect items already connected to this topic)"
+    };
+
+    if (item['archived'] == true ) {
+        data["archive_keyword"] = "unarchive";
+        data["archive_glyphicon"] = "glyphicon-upload";
+    } else {
+        data["archive_keyword"] = "archive";
+        data["archive_glyphicon"] = "glyphicon-download";
+    };
+
+    if (item['starred'] == true ) {
+        data["star_keyword"] = "unstar";
+        data["star_glyphicon"] = "glyphicon-star";
+    } else {
+        data["star_keyword"] = "star";
+        data["star_glyphicon"] = "glyphicon-star-empty";
+    };
+
+    var dataTemplate;
+
+    $.get("http://" + document.location.host + "/static/html_templates/topic_inline.txt", function(value) {
+        dataTemplate = $.templates(value);
+        var html = dataTemplate.render(data);
+        $(write_element).append(html);
+    });
+
+}
+
+
+
+function toggle_topic(toggle_type, toggle_scope, topic_pk) {
+    // This function is called directly from the template (see topic_icons.html)
+
     $.ajax({
         url: '/toggle-topic',
         type: 'POST',
-        data: {'pk': $("#object-details").attr("object-pk"),
-            'toggle_type': toggle_type},
+        data: { 'toggle_type': toggle_type, 'toggle_scope': toggle_scope, 'topic_pk': topic_pk,
+            'object_type': $("#object-details").attr("object-type"),
+            'object_pk': $("#object-details").attr("object-pk"),},
         dataType: 'json',
         beforeSend: function(xhr, settings) {
             xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
         },
         success: function(data, textStatus, jqXHR) {
             var d = $.parseJSON(data);
-            if (d['topic_data']['starred'] == 1) {
-                $("#topic_star span").text("Starred");
-                $("#topic_star span").addClass('glyphicon-star').removeClass('glyphicon-star-empty');
+            var star_selector = "#star-" + topic_pk;
+            var archive_selector = "#archive-" + topic_pk;
+            if (d['topic_data']['starred'] == true) {
+                $(star_selector + " a span").addClass('glyphicon-star').removeClass('glyphicon-star-empty');
+                $(star_selector + " div.star-keyword").each(function () {
+                    $(this).text("un-star");
+                });
             } else {
-                $("#topic_star span").text("Star");
-                $("#topic_star span").addClass('glyphicon-star-empty').removeClass('glyphicon-star');
+                $(star_selector + " a span").addClass('glyphicon-star-empty').removeClass('glyphicon-star');
+                $(star_selector + " div.star-keyword").each(function () {
+                    $(this).text("star");
+                });
             };
-            if (d['topic_data']['archived'] == 1) {
-                $("#topic_archive span").text("Archived");
-                $("#topic_archive span").addClass('glyphicon-upload').removeClass('glyphicon-download');
+
+            if (d['topic_data']['archived'] == true) {
+                $(archive_selector + " a span").addClass('glyphicon-upload').removeClass('glyphicon-download');
+                $(archive_selector + " div.archive-keyword").each(function () {
+                    $(this).text("un-archive");
+                });
             } else {
-                $("#topic_archive span").text("Archive");
-                $("#topic_archive span").addClass('glyphicon-download').removeClass('glyphicon-upload');
+                $(archive_selector + " a span").addClass('glyphicon-download').removeClass('glyphicon-upload');
+                $(archive_selector + " div.archive-keyword").each(function () {
+                    $(this).text("archive");
+                });
             };
         },
         error: function (response) {
         }});
 }
 
+function view_archived_toggle(elem) {
+    if (elem.getAttribute("toggle-state") ==  "off") {
+        elem.setAttribute("toggle-state", "on");
+        elem.textContent = "Hide Archived";
+        $(".archived-object").show();
+    } else {
+        elem.setAttribute("toggle-state", "off");
+        $(".archived-object").hide();
+        elem.textContent = "Show Archived";
+    };
+}
+
 function toggle_manage_button(elem) {
     if (elem.getAttribute("toggle-state") ==  "off") {
         elem.setAttribute("toggle-state", "on");
-        elem.innerHTML = "Close";
-        $(elem).parent().children('.inline_div').show();
+        elem.textContent = "Close";
+        $(elem).parent().parent().children('.inline_div').show();
     } else {
         elem.setAttribute("toggle-state", "off");
-        elem.innerHTML = "Manage";
-        $(elem).parent().children('.inline_div').hide();
+        elem.textContent = "Manage";
+        $(elem).parent().parent().children('.inline_div').hide();
     };
 }
 
@@ -150,19 +212,19 @@ function process_fuse_text_match(input_text_field) {
 
 function update_manager(object_type_to_adjust) {
 
-    if (object_type_to_adjust == "Group") {
+    if (object_type_to_adjust == "group") {
         var read_element = "#id_groups";
         var write_element = "#group_list";
         var error_message = "There was an error updating groups";
     };
 
-    if (object_type_to_adjust == "Contact") {
+    if (object_type_to_adjust == "contact") {
         var read_element = "#id_contacts";
         var write_element = "#contact_list";
         var error_message = "There was an error updating contacts.";
     };
 
-    if (object_type_to_adjust == "Topic") {
+    if (object_type_to_adjust == "topic") {
         var read_element = "#id_topics";
         var write_element = "#topic_list";
         var error_message = "There was an error updating topics.";
@@ -172,6 +234,7 @@ function update_manager(object_type_to_adjust) {
     $(read_element).find("input[type=checkbox]").each(function() {
         input_dict.push({pk: $(this).val(), checked: $(this).prop('checked')});
     });
+    console.log(JSON.stringify(input_dict));
 
     $.ajax({
         url: '/update_manager',
@@ -188,7 +251,11 @@ function update_manager(object_type_to_adjust) {
             $(write_element).empty()
             for (var key in data['current_dict']) {
                 item = data['current_dict'][key];
-                $(write_element).append("<a href='" + item['url'] + "'>" + item['name'] + "</a> ");
+                if (object_type_to_adjust == "topic") {
+                    append_topic(item, write_element);
+                } else {
+                    $(write_element).append("<a href='" + item['url'] + "'>" + item['name'] + "</a> ");
+                };
             };
         },
         error: function (response) {
